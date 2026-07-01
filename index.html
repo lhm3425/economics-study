@@ -1,0 +1,3274 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="한은 경제학">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>한은 경제학 학습 앱</title>
+  <style>
+    :root {
+      --bg:#f7faf9; --paper:#fff; --ink:#111827; --muted:#64748b; --line:#d8e3df;
+      --brand:#0f766e; --soft:#e7f5f2; --warm:#b45309; --warm-soft:#fff7ed;
+      --blue:#1d4ed8; --blue-soft:#eff6ff; --good:#047857; --good-soft:#ecfdf5;
+      --bad:#b91c1c; --bad-soft:#fef2f2; --shadow:0 10px 28px rgba(15,23,42,.08);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; font-family:Arial,"Malgun Gothic",sans-serif; color:var(--ink); background:var(--bg); letter-spacing:0; }
+    header { position:sticky; top:0; z-index:10; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+    .top { max-width:980px; margin:0 auto; padding:14px 14px 10px; }
+    h1 { margin:0 0 10px; font-size:22px; line-height:1.25; }
+    button, input, select { border:1px solid var(--line); border-radius:8px; min-height:42px; padding:10px 12px; font:inherit; background:#fff; color:var(--ink); }
+    button { cursor:pointer; }
+    button.primary { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700; }
+    .mode-tabs { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:10px; }
+    .mode-tabs button.active { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700; }
+    .bar { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    nav { max-width:980px; margin:0 auto; overflow-x:auto; display:flex; gap:8px; padding:0 14px 12px; scrollbar-width:none; }
+    nav::-webkit-scrollbar { display:none; }
+    nav button { white-space:nowrap; min-height:38px; padding:8px 11px; font-size:14px; }
+    nav button.active { background:var(--soft); border-color:#9ed6cf; color:var(--brand); font-weight:700; }
+    main { max-width:980px; margin:0 auto; padding:12px; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+    .stat { background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:10px; box-shadow:var(--shadow); }
+    .stat strong { display:block; font-size:19px; }
+    .stat span { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+    .unit-title { display:flex; justify-content:space-between; align-items:flex-end; gap:10px; margin:18px 0 10px; }
+    h2 { margin:0; font-size:20px; line-height:1.35; }
+    .unit-title small { color:var(--muted); white-space:nowrap; }
+    .keyword-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .card, .question { background:var(--paper); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:12px; }
+    .card summary { list-style:none; cursor:pointer; padding:13px; min-height:70px; }
+    .card summary::-webkit-details-marker { display:none; }
+    .keyword-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+    h3 { margin:0; font-size:16px; line-height:1.35; word-break:keep-all; overflow-wrap:anywhere; }
+    .tag, .badge { display:inline-block; border-radius:999px; padding:3px 8px; font-size:12px; color:var(--brand); background:var(--soft); border:1px solid #b9ded8; }
+    .hint { color:var(--muted); font-size:13px; line-height:1.45; margin-top:7px; }
+    .body { border-top:1px solid var(--line); padding:13px; background:#fff; }
+    .block { margin-bottom:12px; }
+    .block:last-child { margin-bottom:0; }
+    .label { display:inline-block; font-size:12px; font-weight:700; color:var(--brand); background:var(--soft); border-radius:999px; padding:3px 8px; margin-bottom:6px; }
+    .label.warm { color:var(--warm); background:var(--warm-soft); }
+    .label.blue { color:var(--blue); background:var(--blue-soft); }
+    ul { margin:0; padding-left:18px; }
+    li { margin:6px 0; line-height:1.55; word-break:keep-all; overflow-wrap:anywhere; }
+    li.formula-item { list-style:none; margin-left:-18px; }
+    .formula {
+      display:block;
+      max-width:100%;
+      overflow-x:auto;
+      overflow-y:hidden;
+      white-space:nowrap;
+      word-break:normal;
+      overflow-wrap:normal;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fbfefd;
+      padding:9px 10px;
+      margin:6px 0;
+      font-family:"Cambria Math","STIX Two Math","Noto Sans Math","Segoe UI Symbol","Times New Roman",serif;
+      font-size:15px;
+      line-height:1.7;
+      -webkit-overflow-scrolling:touch;
+    }
+    .formula .prefix {
+      font-family:Arial,"Malgun Gothic",sans-serif;
+      color:var(--muted);
+      font-size:12px;
+      margin-right:6px;
+    }
+    .formula .math {
+      letter-spacing:.01em;
+    }
+    .formula sup, .formula sub {
+      font-size:.72em;
+      line-height:0;
+    }
+    .qhead { padding:13px; border-bottom:1px solid var(--line); }
+    .qhead h2 { font-size:17px; line-height:1.55; margin-top:8px; word-break:keep-all; overflow-wrap:anywhere; }
+    .prompt { padding:13px; line-height:1.65; white-space:pre-line; word-break:keep-all; overflow-wrap:anywhere; }
+    .written-extra { border-top:1px solid var(--line); padding:13px; background:#fbfefd; }
+    .written-extra .formula { margin:6px 0 8px; }
+    .explain { margin-top:10px; line-height:1.6; word-break:keep-all; overflow-wrap:anywhere; }
+    .choices { display:grid; gap:8px; padding:12px; }
+    .choice { text-align:left; border:1px solid var(--line); border-radius:8px; background:#fff; padding:11px; line-height:1.45; word-break:keep-all; overflow-wrap:anywhere; }
+    .choice.selected { outline:2px solid var(--brand); background:var(--soft); }
+    .choice.correct { border-color:#86efac; background:var(--good-soft); color:#065f46; }
+    .choice.wrong { border-color:#fecaca; background:var(--bad-soft); color:#991b1b; }
+    .answer { display:none; border-top:1px solid var(--line); padding:12px; line-height:1.6; background:#fbfefd; word-break:keep-all; overflow-wrap:anywhere; }
+    .answer.show { display:block; }
+    .answer strong { color:var(--brand); }
+    .actions { display:flex; gap:8px; padding:0 12px 12px; }
+    .actions button { flex:1; }
+    .empty { display:none; background:#fff; border:1px solid var(--line); border-radius:8px; padding:18px; text-align:center; color:var(--muted); }
+    .fab { position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom)); z-index:20; width:48px; height:48px; border-radius:50%; border-color:var(--brand); background:var(--brand); color:#fff; box-shadow:var(--shadow); font-size:18px; padding:0; }
+    mark { background:#fde68a; padding:0 2px; border-radius:3px; }
+    @media (max-width:680px) {
+      .top { padding-top:12px; }
+      h1 { font-size:20px; }
+      main { padding:10px; }
+      .keyword-grid { grid-template-columns:1fr; }
+      .mode-tabs { grid-template-columns:1fr 1fr; }
+      .bar { grid-template-columns:1fr; }
+      .stat { padding:9px 8px; }
+      .stat strong { font-size:17px; }
+      .card summary { min-height:auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <h1>한은 경제학 학습 앱</h1>
+      <div class="mode-tabs">
+        <button id="conceptMode" class="active">개념 요약</button>
+        <button id="quizMode">객관식 연습</button>
+        <button id="shortMode">약술형 문제</button>
+        <button id="essayMode">논술 문제</button>
+        <button id="noteMode">오답 노트</button>
+      </div>
+      <div class="bar" id="conceptBar">
+        <input id="search" type="search" placeholder="키워드 검색: 독점, 테일러, 환율, OLS">
+        <button class="primary" id="openAll">전체열기</button>
+      </div>
+      <div class="bar" id="quizBar" style="display:none">
+        <select id="quizFilter">
+          <option value="all">전체 문항</option>
+          <option value="wrong">틀린 문항만</option>
+          <option value="unanswered">안 푼 문항만</option>
+        </select>
+        <button class="primary" id="resetQuiz">기록 초기화</button>
+      </div>
+    </div>
+    <nav id="tabs" aria-label="단원 선택"></nav>
+  </header>
+  <main>
+    <section class="stats">
+      <div class="stat"><strong id="statA">0</strong><span id="labelA">단원</span></div>
+      <div class="stat"><strong id="statB">0</strong><span id="labelB">키워드</span></div>
+      <div class="stat"><strong id="statC">0</strong><span id="labelC">표시중</span></div>
+    </section>
+    <section id="conceptView"></section>
+    <section id="quizView" style="display:none"></section>
+    <section id="shortView" style="display:none"></section>
+    <section id="essayView" style="display:none"></section>
+    <section id="noteView" style="display:none"></section>
+    <div class="empty" id="empty">표시할 내용이 없습니다.</div>
+  </main>
+  <button class="fab" id="topBtn" aria-label="맨 위로">↑</button>
+  <script>
+    const DATA = [...([
+      {
+        unit: "미시경제",
+        items: [
+          {
+            keyword: "소비자 선택",
+            hint: "효용극대화와 수요 도출의 출발점",
+            core: ["예산선 위에서 효용이 가장 큰 점을 고른다.", "내부해는 MRS = Px/Py, 코너해는 한계효용 대비 가격을 비교한다.", "마셜수요는 효용극대화, 힉스수요는 지출최소화에서 나온다."],
+            memorize: ["라그랑지안 조건: MUx/MUy = Px/Py", "슬러츠키 분해: 총효과 = 대체효과 + 소득효과", "보통재는 소득 증가 때 수요 증가, 열등재는 감소 가능"],
+            exam: ["수요함수, 간접효용, 지출함수, 보상변화 CV/EV 계산이 자주 나온다."]
+          },
+          {
+            keyword: "대체탄력성",
+            hint: "상대가격 변화에 투입·소비 비율이 얼마나 쉽게 바뀌는가",
+            core: [
+              "대체탄력성은 한계대체율 또는 한계기술대체율이 변할 때 두 재화·두 투입의 비율이 얼마나 민감하게 변하는지를 나타낸다.",
+              "소비자 이론에서는 무차별곡선의 굽은 정도, 생산자 이론에서는 등량곡선의 굽은 정도를 읽는 지표다.",
+              "값이 클수록 서로 대체하기 쉽고, 값이 작을수록 보완성이 강하다."
+            ],
+            memorize: [
+              "σ = d ln(x/y) / d ln(MRS) 또는 σ = d ln(K/L) / d ln(MRTS)",
+              "완전대체재: σ = ∞",
+              "콥-더글라스: σ = 1",
+              "레온티에프 완전보완재: σ = 0"
+            ],
+            exam: [
+              "가격탄력성은 가격 변화에 대한 수요량 반응, 대체탄력성은 상대가격 변화에 대한 구성비 반응이다.",
+              "CES 함수가 나오면 ρ 또는 대체탄력성 σ의 관계를 묻는 문제가 자주 나온다."
+            ]
+          },
+          {
+            keyword: "보상변화·대등변화",
+            hint: "CV와 EV, 기준 가격을 헷갈리지 않는 것이 핵심",
+            core: [
+              "보상변화(CV)는 가격 변화 후의 새 가격에서 소비자를 원래 효용수준으로 되돌리기 위해 필요한 금액이다.",
+              "대등변화(EV)는 가격 변화 전의 옛 가격에서 가격 변화와 같은 효용 변화를 만들기 위해 필요한 금액이다.",
+              "일부 교재는 equivalent variation을 동등변화라고도 부르며, 대등변화와 같은 개념으로 쓰인다."
+            ],
+            memorize: [
+              "CV = e(p_1, u_0) - e(p_1, u_1)",
+              "EV = e(p_0, u_0) - e(p_0, u_1)",
+              "가격하락 후 후생증가: CV와 EV의 부호는 교재 정의에 따라 달라질 수 있으므로 '지불의사/보상필요액' 방향을 먼저 확인"
+            ],
+            exam: [
+              "CV는 새 가격 p_1에서 계산, EV는 옛 가격 p_0에서 계산한다고 기억한다.",
+              "보상변화는 '변화 후 보상', 대등변화는 '변화 전 같은 효과'로 말로 풀어 쓰면 실수를 줄일 수 있다."
+            ]
+          },
+          {
+            keyword: "마셜수요·힉스수요",
+            hint: "효용극대화 수요와 지출최소화 수요의 차이",
+            core: [
+              "마셜수요는 주어진 소득과 가격에서 효용을 극대화할 때의 수요다.",
+              "힉스수요는 목표 효용을 최소비용으로 달성할 때의 보상수요다.",
+              "가격 변화 효과를 대체효과와 소득효과로 나눌 때 힉스수요가 대체효과를 잡아준다."
+            ],
+            memorize: [
+              "마셜수요: x(p, m)",
+              "힉스수요: h(p, u)",
+              "로이 항등식: x_i(p,m) = -V_{p_i}/V_m",
+              "셰퍼드 보조정리: h_i(p,u) = ∂e(p,u)/∂p_i"
+            ],
+            exam: [
+              "소득 m이 주어지면 마셜수요, 효용 u가 주어지면 힉스수요를 떠올린다.",
+              "보상변화·대등변화 계산은 지출함수 e(p,u)와 힉스수요를 함께 쓰는 경우가 많다."
+            ]
+          },
+          {
+            keyword: "보통재·열등재·기펜재",
+            hint: "소득효과 방향과 수요법칙 예외 구분",
+            core: [
+              "보통재는 소득이 증가하면 수요가 증가하고, 열등재는 소득이 증가하면 수요가 감소한다.",
+              "기펜재는 강한 열등재라서 가격이 오를 때 오히려 수요가 증가하는 특수한 경우다.",
+              "모든 기펜재는 열등재지만, 모든 열등재가 기펜재는 아니다."
+            ],
+            memorize: [
+              "보통재: ∂x/∂m > 0",
+              "열등재: ∂x/∂m < 0",
+              "기펜재: ∂x/∂p > 0",
+              "슬러츠키: 총효과 = 대체효과 + 소득효과"
+            ],
+            exam: [
+              "가격이 오르면 대체효과는 항상 수요를 줄이는 방향이다.",
+              "기펜재는 소득효과가 대체효과보다 크고 반대방향일 때만 가능하다."
+            ]
+          },
+          {
+            keyword: "탄력성 구분",
+            hint: "가격탄력성, 소득탄력성, 교차탄력성, 대체탄력성 비교",
+            core: [
+              "가격탄력성은 자기 가격 변화에 대한 수요량 반응이다.",
+              "소득탄력성은 소득 변화에 대한 수요량 반응이고, 재화가 보통재인지 열등재인지 판별한다.",
+              "교차탄력성은 다른 재화 가격 변화에 대한 수요량 반응이고, 대체재·보완재 판별에 쓴다.",
+              "대체탄력성은 수요량 하나가 아니라 두 재화 또는 두 투입의 비율 변화에 초점을 둔다."
+            ],
+            memorize: [
+              "가격탄력성: ε_xp = (%Δx) / (%Δp_x)",
+              "소득탄력성: ε_xm = (%Δx) / (%Δm)",
+              "교차탄력성: ε_xy = (%Δx) / (%Δp_y)",
+              "대체탄력성: σ = (%Δ(x/y)) / (%ΔMRS)"
+            ],
+            exam: [
+              "독점 가격결정은 가격탄력성, 재화 성격은 소득탄력성, 대체·보완 관계는 교차탄력성을 먼저 본다.",
+              "생산함수나 CES가 나오면 가격탄력성이 아니라 대체탄력성을 묻는 경우가 많다."
+            ]
+          },
+          {
+            keyword: "현시선호",
+            hint: "관찰된 선택으로 선호를 추론하는 이론",
+            core: [
+              "소비자가 실제로 선택한 상품묶음은 살 수 있었던 다른 묶음보다 '직접 현시선호'된 것이다.",
+              "약공리(WARP): A를 살 수 있을 때 B를 샀으면, B를 살 수 있을 때 A를 사지 않는다.",
+              "강공리(SARP): 직접·간접 현시선호의 이행성. 이를 만족하면 효용함수가 존재한다."
+            ],
+            memorize: [
+              "직접현시선호: p_0·x_0 ≥ p_0·x_1 이면 x_0 R x_1",
+              "WARP: x_0 R x_1이고 x_1 ≠ x_0 이면 x_1이 x_0를 현시선호할 수 없음",
+              "SARP: 현시선호 관계가 순환하면 합리성 위반"
+            ],
+            exam: [
+              "가격·소득 변화 전후 선택 묶음이 주어지면 WARP 위반 여부를 확인한다.",
+              "WARP 만족 → 보통재 수요법칙 성립, SARP 만족 → 효용함수 복원 가능."
+            ]
+          },
+          {
+            keyword: "생산자와 비용",
+            hint: "비용최소화, 이윤극대화, 공급곡선",
+            core: ["주어진 산출량을 가장 싸게 생산하는 투입 조합을 찾는다.", "장기에는 모든 투입이 가변, 단기에는 일부 투입이 고정된다.", "완전경쟁 기업은 P = MC인 지점에서 생산량을 정한다."],
+            memorize: ["비용최소화: MRTS = w/r", "이윤극대화: MR = MC", "공급곡선은 평균가변비용보다 위의 MC 구간"],
+            exam: ["비용함수 도출, 규모수익 판별, 시장공급 수평합을 빠르게 처리한다."]
+          },
+          {
+            keyword: "완전경쟁과 후생",
+            hint: "경쟁균형, 파레토 효율, 잉여 분석",
+            core: ["완전경쟁 균형은 가격수용자들의 개별 최적화와 시장청산으로 결정된다.", "외부성, 공공재, 정보비대칭이 없으면 경쟁균형은 파레토 효율적이다.", "조세나 가격통제는 사중손실을 만든다."],
+            memorize: ["왈라스 법칙: 가격가중 초과수요 합은 0", "후생경제학 제1정리: 경쟁균형은 파레토 효율", "후생경제학 제2정리: 적절한 초기분배로 원하는 효율 배분 달성"],
+            exam: ["세금, 보조금, 가격상한, 가격하한의 소비자/생산자잉여 변화를 그림으로 정리한다."]
+          },
+          {
+            keyword: "독점과 가격차별",
+            hint: "MR=MC와 탄력성 규칙",
+            core: ["독점기업은 수요곡선을 보고 생산량과 가격을 고른다.", "가격차별은 지불의사 차이를 이용해 이윤을 늘리는 전략이다.", "분리 가능한 시장에서는 각 시장의 MR을 MC와 같게 만든다."],
+            memorize: ["독점 가격: P(1 + 1/ε) = MC, ε는 음의 탄력성", "3급 가격차별: 탄력성이 낮은 시장에 더 높은 가격", "이부가격: 가입비 + 사용가격"],
+            exam: ["쿠폰, 묶음판매, 시장분리 조건을 보면 가격차별 문제로 분류한다."]
+          },
+          {
+            keyword: "게임이론",
+            hint: "전략적 상호작용의 균형",
+            core: ["상대의 선택을 고려해 자신의 최적 반응을 고른다.", "동시게임은 내쉬균형, 순차게임은 역진귀납으로 푼다.", "정보가 불완전하면 믿음과 전략이 함께 균형을 이뤄야 한다."],
+            memorize: ["내쉬균형: 서로가 서로의 최적반응", "부분게임완전균형: 모든 부분게임에서 내쉬균형", "혼합전략: 상대를 무차별하게 만드는 확률"],
+            exam: ["보수행렬은 최적반응 표시부터, 순차게임은 마지막 의사결정부터 푼다."]
+          },
+          {
+            keyword: "정보경제",
+            hint: "역선택, 도덕적 해이, 계약",
+            core: ["정보를 가진 쪽과 못 가진 쪽의 유인이 다르다.", "역선택은 거래 전 숨은 유형, 도덕적 해이는 거래 후 숨은 행동 문제다.", "계약문제는 참여제약과 유인양립제약을 세운다."],
+            memorize: ["IR: 계약에 참여할 만큼 효용이 높아야 함", "IC: 원하는 행동/유형을 스스로 선택해야 함", "고능력자의 IC와 저능력자의 IR이 결합되는 경우가 많다."],
+            exam: ["임금계약, 보험, 조세 선별 문제가 나오면 IR/IC부터 쓴다."]
+          },
+          {
+            keyword: "외부성·공공재",
+            hint: "시장실패와 정부개입",
+            core: ["외부성은 가격에 반영되지 않는 비용이나 편익이다.", "공공재는 비경합성과 비배제성이 있어 무임승차가 생긴다.", "사회적 최적은 개인의 한계조건과 다르다."],
+            memorize: ["피구세 = 한계외부비용", "공공재 사뮤엘슨 조건: ΣMRS = MRT", "코즈정리: 거래비용이 없으면 권리 배분과 무관하게 효율 달성"],
+            exam: ["오염, 혼잡, 치안, 국방 키워드는 외부성/공공재 조건을 먼저 확인한다."]
+          }
+        ]
+      },
+      {
+        unit: "거시경제+화폐금융",
+        items: [
+          {
+            keyword: "솔로 성장모형",
+            hint: "자본축적과 정상상태",
+            core: ["저축이 투자를 만들고 투자는 자본을 축적한다.", "정상상태에서는 1인당 자본이 더 이상 변하지 않는다.", "기술진보가 장기 1인당 성장의 원천이다."],
+            memorize: ["정상상태: s f(k) = (n+g+δ)k", "황금률: MPK = n+g+δ", "저축률 증가는 수준효과, 기술진보는 성장률 효과"],
+            exam: ["저축률, 인구증가율, 감가상각 변화가 k*, y*, c*에 미치는 효과를 묻는다."]
+          },
+          {
+            keyword: "소비이론",
+            hint: "기간 간 선택, 평생소득, 불확실성과 자산가격",
+            core: [
+              "가계는 현재소비와 미래소비를 비교해 생애효용을 극대화한다.",
+              "케인즈 소비함수는 현재소득을 강조하지만, 생애주기·항상소득가설은 평생소득과 기대소득을 강조한다.",
+              "불확실성이 있으면 미래 소득위험에 대비해 예비적 저축이 생길 수 있다.",
+              "CCAPM은 자산수익률을 소비의 한계효용 변화와 연결한다."
+            ],
+            memorize: [
+              "오일러 방정식: u'(c_t) = β(1+r)E_t[u'(c_{t+1})]",
+              "항상소득가설: 일시소득보다 영구소득이 소비에 더 큰 영향",
+              "예비적 저축: 소득위험 증가 + u'''(c)>0이면 저축 유인 증가",
+              "CCAPM: 1 = E_t[M_{t+1}R_{t+1}], M_{t+1}=β u'(c_{t+1})/u'(c_t)"
+            ],
+            exam: [
+              "일시소득 충격과 영구소득 충격의 소비 반응 크기를 비교한다.",
+              "차입제약이 있으면 현재소득 변화가 소비에 더 크게 반영될 수 있다.",
+              "위험자산은 소비가 낮아 한계효용이 높은 상태에서 수익률이 낮으면 더 큰 위험프리미엄을 요구한다."
+            ]
+          },
+          {
+            keyword: "투자이론",
+            hint: "자본의 사용자비용, q이론, 조정비용",
+            core: [
+              "기업투자는 현재의 비용과 미래 자본수익을 비교하는 동태적 의사결정이다.",
+              "신고전파 투자이론에서는 자본의 한계생산과 사용자비용을 비교한다.",
+              "q이론은 설치된 자본의 시장가치와 대체비용의 비율로 투자 유인을 설명한다.",
+              "조정비용이 있으면 투자는 한 번에 크게 움직이지 않고 점진적으로 조정된다."
+            ],
+            memorize: [
+              "사용자비용: uc ≈ (r + δ - 기대자본재가격상승률)P_K",
+              "투자조건: MPK가 사용자비용보다 크면 투자 증가",
+              "평균 q = 기업가치 / 자본대체비용",
+              "한계 q > 1이면 투자 증가, 한계 q < 1이면 투자 감소"
+            ],
+            exam: [
+              "이자율 상승은 사용자비용을 높여 투자를 줄이는 방향이다.",
+              "세액공제나 투자보조금은 사용자비용을 낮춰 투자를 늘릴 수 있다.",
+              "q이론 문제에서는 평균 q와 한계 q의 차이를 구분한다."
+            ]
+          },
+          {
+            keyword: "노동 2-sided search 모델",
+            hint: "구직자와 기업이 모두 탐색·매칭을 거쳐 고용관계를 형성하는 노동시장 모형",
+            core: [
+              "2-sided search는 근로자와 기업이 즉시 만나는 완전경쟁 노동시장과 달리, 구직자와 공석이 탐색마찰을 거쳐 확률적으로 매칭된다고 본다.",
+              "매칭함수 M(u,v)는 실업자 u와 공석 v가 만들어내는 신규매칭 수를 나타내며, 노동시장 긴축도 θ = v/u가 높을수록 근로자의 취업확률은 높고 기업의 공석충원확률은 낮아진다.",
+              "매칭 후 임금은 보통 총잉여를 근로자와 기업이 나누는 Nash bargaining으로 결정되며, 공석 진입의 자유진입 조건이 일자리 창출을 고정한다.",
+              "이 모형은 실업, 결원, 임금, 베버리지 곡선, 경기변동 시 노동시장 조정 지연을 설명하는 데 쓰인다."
+            ],
+            memorize: [
+              "매칭함수: m = M(u,v), θ = v/u",
+              "취업확률: f(θ) = M(u,v)/u = θq(θ)",
+              "공석충원확률: q(θ) = M(u,v)/v",
+              "근로자 Bellman: rU = b + f(θ)(W - U)",
+              "근로자 Bellman: rW = w + s(U - W)",
+              "기업 Bellman: rV = -c + q(θ)(J - V)",
+              "기업 Bellman: rJ = y - w + s(V - J)",
+              "자유진입: V = 0, c = q(θ)J",
+              "매치잉여: S = (W-U) + (J-V)",
+              "Nash bargaining: W-U = φS, J-V = (1-φ)S"
+            ],
+            exam: [
+              "벨만 방정식에서 U는 실업자 가치, W는 취업자 가치, V는 공석 가치, J는 채워진 일자리 가치를 뜻한다고 먼저 정의한다.",
+              "θ 상승은 근로자에게 유리하지만 기업에는 불리하다. 즉 f(θ)는 상승하고 q(θ)는 하락한다.",
+              "분리율 s 상승은 실업가치를 상대적으로 낮추고 일자리 가치도 낮춰 실업률 상승과 공석 감소 방향으로 작용한다.",
+              "자유진입 조건 V=0과 Nash 임금협상을 결합하면 노동시장 긴축도와 임금이 동시에 결정된다."
+            ]
+          },
+          {
+            keyword: "PS-WS 모형",
+            hint: "가격설정식과 임금설정식으로 자연실업률을 설명하는 노동시장 모형",
+            core: [
+              "WS(Wage Setting)는 근로자·노조·효율임금 요인 등이 요구하는 실질임금을 실업률의 함수로 나타낸다.",
+              "PS(Price Setting)는 기업의 가격설정과 마크업이 허용하는 실질임금을 나타낸다.",
+              "실업률이 높을수록 근로자의 교섭력이 약해져 WS가 요구하는 실질임금은 낮아진다.",
+              "PS와 WS가 만나는 지점이 중기균형의 자연실업률 또는 균형실업률이다."
+            ],
+            memorize: [
+              "WS: W/P = F(u,z), F_u < 0, F_z > 0",
+              "PS: P = (1+μ)W/A",
+              "PS 실질임금: W/P = A/(1+μ)",
+              "균형조건: F(u_n,z) = A/(1+μ)",
+              "마크업 μ 상승 → PS 하락 → 자연실업률 u_n 상승",
+              "실업급여·고용보호 등 z 상승 → WS 상승 → 자연실업률 u_n 상승"
+            ],
+            exam: [
+              "WS는 우하향, PS는 단순 모형에서 수평선으로 그린다.",
+              "마크업 상승, 생산성 하락, 노동시장 제도 변화가 자연실업률을 어떻게 움직이는지 그래프로 설명한다.",
+              "AS곡선 유도 문제에서는 실제실업률이 자연실업률보다 낮으면 임금·물가 상승압력이 생긴다고 연결한다.",
+              "PS-WS는 단기 경기변동보다 중기 실업률 결정과 구조적 실업 요인을 설명하는 틀이다."
+            ]
+          },
+          {
+            keyword: "IS-LM·AD-AS",
+            hint: "단기 총수요와 정책효과",
+            core: ["IS는 재화시장, LM은 화폐시장의 균형이다.", "AD는 물가와 산출의 음의 관계, AS는 생산비용과 기대물가에 좌우된다.", "재정정책과 통화정책의 효과는 곡선 기울기에 따라 달라진다."],
+            memorize: ["IS: Y = C+I+G+NX", "LM: M/P = L(Y,i)", "유동성함정에서는 통화정책 효과가 약하고 재정정책 효과가 커진다."],
+            exam: ["정책 충격이 이자율, 산출, 물가를 어떤 순서로 움직이는지 그림으로 답한다."]
+          },
+          {
+            keyword: "가격경직성 이유",
+            hint: "새케인즈 경제학이 가격이 느리게 조정되는 이유를 설명하는 이론들",
+            core: [
+              "메뉴비용: 가격 변경 자체에 비용이 들면 작은 충격에는 가격을 유지하는 것이 최적이다.",
+              "효율임금: 임금을 시장청산 수준보다 높게 유지해 근로 의욕과 생산성을 관리한다.",
+              "암묵적 계약: 기업과 근로자가 임금을 완충장치로 활용해 고용을 안정적으로 유지한다.",
+              "메뉴비용이 작아도 사회적 손실은 메뉴비용보다 클 수 있다 (Mankiw)."
+            ],
+            memorize: [
+              "메뉴비용: ΔProfit < menu cost → 가격 고정",
+              "효율임금: w* = argmax e(w)/w, 실업이 규율 역할",
+              "Calvo pricing: 기업이 확률 (1-θ)로만 가격을 재설정 → NKPC 도출"
+            ],
+            exam: [
+              "새케인즈 모형에서 가격경직성의 미시적 근거를 묻는 문제가 나온다.",
+              "합리적 기대는 가격경직성의 원인이 아니라 새고전학파의 가격 신축성 가정과 연결된다."
+            ]
+          },
+          {
+            keyword: "뉴케인지언 모형",
+            hint: "IS, 필립스곡선, 테일러 준칙",
+            core: ["가격경직성 때문에 통화정책이 실물에 영향을 준다.", "중앙은행은 인플레이션과 산출갭에 반응해 금리를 조정한다.", "기대가 현재의 산출과 물가를 움직인다."],
+            memorize: ["NK IS: 산출갭은 실질금리에 음으로 반응", "NKPC: 인플레이션은 기대인플레이션과 한계비용에 좌우", "테일러 원칙: 인플레 상승 때 명목금리를 더 크게 올려야 안정"],
+            exam: ["수요충격, 비용충격, 금리준칙 변화의 동학을 묻는 문제가 많다."]
+          },
+          {
+            keyword: "화폐와 중앙은행",
+            hint: "통화량, 금리, 지급준비",
+            core: ["중앙은행은 본원통화를 조절하고 은행시스템은 통화를 창출한다.", "공개시장매입은 본원통화와 은행준비금을 늘린다.", "금리정책은 기대와 금융조건을 통해 총수요에 전달된다."],
+            memorize: ["통화승수는 현금보유율과 지급준비율이 높을수록 작다.", "채권가격과 수익률은 반대로 움직인다.", "실질금리 = 명목금리 - 기대인플레이션"],
+            exam: ["중앙은행 대차대조표, 지준시장, 공개시장조작의 방향을 정확히 쓴다."]
+          },
+          {
+            keyword: "이자율 기간 구조",
+            hint: "만기가 다른 채권수익률의 관계와 수익률곡선",
+            core: [
+              "이자율 기간 구조는 만기별 이자율이 서로 어떻게 연결되는지를 설명한다.",
+              "수익률곡선은 만기와 수익률의 관계를 그린 것으로, 우상향·평탄·역전 형태가 경기와 통화정책 기대를 반영한다.",
+              "기대가설은 장기금리가 현재와 미래 단기금리의 평균으로 결정된다고 본다.",
+              "유동성프리미엄 이론은 장기채 보유 위험 때문에 장기금리에 기간프리미엄이 붙는다고 본다."
+            ],
+            memorize: [
+              "무재정거래: (1+i_{2,t})^2 = (1+i_{1,t})(1+E_t i_{1,t+1})",
+              "근사식: i_{2,t} ≈ (i_{1,t}+E_t i_{1,t+1})/2",
+              "n기 장기금리: i_{n,t} ≈ (1/n)Σ_{j=0}^{n-1}E_t i_{1,t+j} + term premium",
+              "채권가격: P_n = Σ_{j=1}^{n} C/(1+i_j)^j + F/(1+i_n)^n",
+              "장단기금리차: spread = i_long - i_short"
+            ],
+            exam: [
+              "장기금리 상승은 미래 단기금리 상승 기대, 기간프리미엄 상승, 인플레이션 기대 상승으로 나누어 설명한다.",
+              "수익률곡선 역전은 향후 단기금리 인하 기대나 경기침체 우려와 연결해 해석한다.",
+              "기대가설만 쓰면 평균 단기금리이고, 현실 설명에서는 위험·유동성·기간프리미엄을 추가한다.",
+              "통화정책은 단기금리를 직접 조정하지만 기대경로와 포트폴리오 경로를 통해 장기금리에도 영향을 준다."
+            ]
+          },
+          {
+            keyword: "CIA 조건",
+            hint: "현금선불제약과 화폐수요의 미시적 기초",
+            core: [
+              "CIA(Cash-in-Advance) 조건은 재화를 구입하려면 사전에 화폐를 보유해야 한다는 제약이다.",
+              "화폐가 효용을 직접 주는 것이 아니라 거래를 가능하게 하므로 화폐수요가 생긴다.",
+              "인플레이션은 보유한 화폐의 실질구매력을 낮추므로 화폐보유에 세금처럼 작용한다."
+            ],
+            memorize: [
+              "CIA 제약: P_t c_t ≤ M_{t-1}+T_t",
+              "실질형: c_t ≤ m_{t-1}/(1+π_t)+τ_t",
+              "명목금리 상승은 화폐보유의 기회비용 상승"
+            ],
+            exam: [
+              "CIA 모형에서는 화폐가 거래제약을 완화하는 수단이라는 점을 먼저 쓴다.",
+              "인플레이션 상승은 실질화폐잔고를 줄여 소비·노동공급 결정에 왜곡을 만든다.",
+              "MIU와 달리 CIA는 화폐가 효용함수 안에 직접 들어가지 않는다."
+            ]
+          },
+          {
+            keyword: "MIU 모형",
+            hint: "화폐가 효용함수에 직접 들어가는 모형",
+            core: [
+              "MIU(Money-in-the-Utility) 모형은 실질화폐잔고가 소비자 효용을 직접 높인다고 가정한다.",
+              "화폐는 거래편의, 유동성 서비스, 결제서비스를 제공하는 재화처럼 취급된다.",
+              "최적 화폐보유는 화폐의 한계효용과 명목금리라는 기회비용을 비교해 결정된다."
+            ],
+            memorize: [
+              "효용함수: U(c_t, M_t/P_t)",
+              "화폐수요 FOC: MU_m / MU_c ≈ i/(1+i)",
+              "명목금리 i가 오르면 실질화폐수요 감소"
+            ],
+            exam: [
+              "MIU는 화폐보유의 편익을 효용함수에 직접 넣는 접근이다.",
+              "CIA는 거래제약, MIU는 효용함수, 보몰-토빈은 거래비용 절감 논리로 화폐수요를 설명한다.",
+              "명목금리가 0이면 화폐보유의 기회비용이 작아져 화폐와 채권의 구분이 약해진다."
+            ]
+          },
+          {
+            keyword: "보몰-토빈 모형",
+            hint: "거래비용과 이자수익의 상충으로 화폐수요를 설명",
+            core: [
+              "보몰-토빈 모형은 현금을 자주 인출하면 거래비용이 늘고, 적게 인출하면 평균 현금보유가 늘어 이자수익을 포기한다는 상충관계에서 출발한다.",
+              "소득이나 거래규모가 커질수록 화폐수요는 증가하지만, 규모의 경제 때문에 소득보다 덜 비례적으로 증가한다.",
+              "명목금리가 높을수록 현금보유의 기회비용이 커져 평균 화폐보유가 감소한다."
+            ],
+            memorize: [
+              "총비용: TC = bY/C + iC/2",
+              "최적 인출액: C* = sqrt(2bY/i)",
+              "평균 화폐보유: M^d = C*/2 = sqrt(bY/(2i))",
+              "소득탄력성 1/2, 이자율탄력성 -1/2"
+            ],
+            exam: [
+              "화폐수요가 소득에는 증가, 이자율에는 감소한다는 결과를 수식으로 보인다.",
+              "거래비용 b가 오르면 한 번에 더 많이 인출하고 평균 화폐보유도 늘어난다.",
+              "케임브리지식 화폐수요와 달리 이자율이 명시적으로 들어간다는 점이 중요하다."
+            ]
+          },
+          {
+            keyword: "ZLB와 유동성함정",
+            hint: "명목금리 하한에서 통화정책이 약해지는 상황",
+            core: [
+              "ZLB(Zero Lower Bound)는 명목금리가 0 근처 아래로 내려가기 어려운 제약을 말한다.",
+              "명목금리가 하한에 묶이면 중앙은행이 단기금리를 더 내려 총수요를 자극하기 어렵다.",
+              "이때 화폐와 단기채권이 거의 완전대체가 되어 전통적 공개시장조작의 효과가 약해질 수 있다."
+            ],
+            memorize: [
+              "피셔식: r = i - π^e",
+              "ZLB에서 i≈0이면 실질금리를 낮추려면 기대인플레이션 π^e를 높이는 경로가 중요",
+              "대응수단: 양적완화, 포워드가이던스, 마이너스금리, 재정정책, 평균물가목표제"
+            ],
+            exam: [
+              "ZLB에서는 통화정책이 완전히 불가능한 것이 아니라 전통적 금리정책 여지가 줄어든다고 쓴다.",
+              "기대경로를 통해 장기금리와 실질금리를 움직이는 비전통적 정책을 설명한다.",
+              "재정승수는 ZLB에서 더 커질 수 있다. 금리상승에 따른 구축효과가 약하기 때문이다."
+            ]
+          },
+          {
+            keyword: "은행과 금융시장",
+            hint: "유동성 창출, 뱅크런, 위험프리미엄",
+            core: ["은행은 단기예금으로 장기대출을 만들어 유동성을 창출한다.", "만기불일치는 뱅크런 위험을 만든다.", "금융마찰은 실물충격을 증폭할 수 있다."],
+            memorize: ["예금보험은 뱅크런을 줄이지만 도덕적 해이를 키울 수 있다.", "위험프리미엄 상승은 투자와 총수요를 위축시킨다.", "기간구조 기대가설: 장기금리는 미래 단기금리 기대의 평균"],
+            exam: ["금융위기, 담보제약, 신용경색 문제는 대차대조표 효과를 같이 설명한다."]
+          },
+          {
+            keyword: "재정정책",
+            hint: "정부예산제약과 부채",
+            core: ["정부지출과 조세는 총수요와 자원배분을 바꾼다.", "정부부채는 미래의 조세나 지출조정과 연결된다.", "리카도 동등성은 강한 조건에서만 성립한다."],
+            memorize: ["정부예산제약: 부채 변화 = 이자비용 + 지출 - 조세", "조세평탄화: 왜곡비용을 줄이려 세율 변동을 완만하게", "부채 지속가능성은 성장률과 이자율 차이에 좌우"],
+            exam: ["재정승수, 구축효과, 부채 안정화 조건을 구분해서 쓴다."]
+          }
+        ]
+      },
+      {
+        unit: "국제경제",
+        items: [
+          {
+            keyword: "무역이론",
+            hint: "비교우위와 요소부존",
+            core: ["무역은 절대우위가 아니라 비교우위에서 발생한다.", "요소부존 차이는 무역패턴과 소득분배를 바꾼다.", "무역은 전체 후생을 늘리지만 분배 갈등을 만든다."],
+            memorize: ["리카도: 상대적 노동생산성 차이", "헥셔-올린: 풍부한 요소를 집약적으로 쓰는 재화를 수출", "스톨퍼-새뮤얼슨: 재화가격 상승은 집약요소의 실질보수를 올림"],
+            exam: ["무역개방 후 임금, 지대, 재화가격 변화의 방향을 정리한다."]
+          },
+          {
+            keyword: "립진스키 정리",
+            hint: "상품가격이 고정될 때 요소부존 증가가 산출구조를 바꾸는 정리",
+            core: [
+              "립진스키 정리는 2재화·2요소 헥셔-올린 모형에서 상품가격이 고정되어 있을 때 한 요소의 부존량 증가가 산출량에 미치는 효과를 설명한다.",
+              "어떤 요소가 증가하면 그 요소를 집약적으로 사용하는 재화의 산출은 증가하고, 다른 재화의 산출은 감소한다.",
+              "핵심은 재화가격이 고정되면 요소가격과 요소투입비율도 고정되므로, 증가한 요소를 흡수하려면 산업구조가 바뀌어야 한다는 점이다."
+            ],
+            memorize: [
+              "K 증가 => 자본집약재 X 생산 증가, 노동집약재 Y 생산 감소",
+              "L 증가 => 노동집약재 Y 생산 증가, 자본집약재 X 생산 감소",
+              "조건: 2x2 모형, 완전경쟁, 동일기술, 상품가격 고정, 두 재화 모두 계속 생산"
+            ],
+            exam: [
+              "요소부존 변화 문제는 먼저 어느 재화가 어느 요소집약적인지 표시한다.",
+              "소국 개방경제에서는 세계가격이 고정되어 립진스키 효과가 깔끔하게 나온다.",
+              "대국이면 산출 변화가 세계가격을 바꿀 수 있어 결론이 약해질 수 있다."
+            ]
+          },
+          {
+            keyword: "요소가격균등화 정리",
+            hint: "자유무역이 임금과 자본수익률을 같게 만드는 조건",
+            core: [
+              "요소가격균등화 정리는 상품 자유무역만으로도 국가 간 요소가격이 같아질 수 있다는 헥셔-올린 모형의 명제다.",
+              "재화가격이 같아지고, 두 나라가 같은 기술로 두 재화를 모두 생산하면 임금과 자본수익률이 같아진다.",
+              "요소가 실제로 국경을 이동하지 않아도 상품무역이 간접적으로 요소서비스를 거래하는 역할을 한다."
+            ],
+            memorize: [
+              "자유무역 => p_X, p_Y 균등화 => w, r 균등화",
+              "강한 조건: 동일기술, 완전경쟁, 수송비 없음, 무역장벽 없음, 요소집약도 역전 없음, 두 나라 모두 두 재화 생산",
+              "현실에서 완전한 균등화가 어려운 이유: 기술차이, 무역비용, 제도차이, 비무역재, 생산특화"
+            ],
+            exam: [
+              "스톨퍼-새뮤얼슨은 재화가격 변화가 요소가격을 바꾸는 정리, 요소가격균등화는 재화가격 균등화가 요소가격 균등화로 이어지는 정리다.",
+              "임금이 실제로 완전히 같아지지 않는 이유를 묻는 문제에서는 가정이 깨지는 지점을 쓰면 된다."
+            ]
+          },
+          {
+            keyword: "불완전경쟁 무역",
+            hint: "규모의 경제와 기업 이질성",
+            core: ["규모의 경제가 있으면 유사한 국가끼리도 무역할 수 있다.", "독점적 경쟁에서는 제품 다양성과 가격하락이 무역이익이다.", "생산성이 높은 기업이 수출시장에 진입한다."],
+            memorize: ["Krugman 모형: 규모의 경제 + 제품차별화", "Melitz 모형: 기업 생산성 이질성 + 고정수출비용", "무역자유화는 평균 생산성을 높일 수 있음"],
+            exam: ["시장규모 확대, 기업 퇴출, 수출기업 프리미엄을 연결해 설명한다."]
+          },
+          {
+            keyword: "무역정책",
+            hint: "관세, 쿼터, 후생효과",
+            core: ["관세는 국내가격을 올리고 수입을 줄인다.", "소국은 관세로 교역조건을 개선할 수 없어 순손실이 발생한다.", "대국은 최적관세 논리가 가능하지만 보복 위험이 있다."],
+            memorize: ["관세효과: 소비자잉여 감소, 생산자잉여 증가, 정부수입 증가, 사중손실 발생", "쿼터렌트는 배분 방식에 따라 귀속이 달라짐", "유효보호율은 부가가치 기준 보호 정도"],
+            exam: ["부분균형 그림에서 면적을 정확히 이름 붙이는 문제가 흔하다."]
+          },
+          {
+            keyword: "국제수지",
+            hint: "경상수지와 대외순자산",
+            core: ["경상수지는 한 나라의 저축과 투자의 차이다.", "경상수지 흑자는 대외순자산 증가로 이어진다.", "무역수지와 경상수지는 같지 않을 수 있다."],
+            memorize: ["CA = S - I", "CA = NX + 순해외소득 + 순이전", "대외순자산 변화는 경상수지와 평가효과에 좌우"],
+            exam: ["재정적자, 투자증가, 저축변화가 경상수지에 미치는 효과를 묻는다."]
+          },
+          {
+            keyword: "환율과 국제금융",
+            hint: "PPP, UIP, 오버슈팅",
+            core: ["환율은 두 통화의 상대가격이다.", "상품시장 차익거래는 구매력평가, 금융시장 차익거래는 이자율평가로 정리된다.", "가격이 경직적이면 환율이 장기균형보다 과하게 움직일 수 있다."],
+            memorize: ["PPP: 환율 변화 ≈ 국내물가상승률 - 해외물가상승률", "UIP: 기대절하율 ≈ 국내금리 - 해외금리", "통화확대는 단기적으로 환율 오버슈팅 가능"],
+            exam: ["금리 상승이 환율에 미치는 효과는 자본이동과 기대환율을 같이 본다."]
+          },
+          {
+            keyword: "UIP가 성립하지 않는 경우",
+            hint: "이자율평가 퍼즐과 위험프리미엄",
+            core: [
+              "UIP는 무위험 차익거래가 아니라 기대수익률 조건이므로, 실제 자료에서는 자주 깨져 보인다.",
+              "국내금리가 해외금리보다 높으면 UIP상 국내통화가 기대절하되어야 하지만, 단기 자료에서는 고금리 통화가 오히려 절상되거나 덜 절하되는 경우가 있다.",
+              "대표 원인은 위험프리미엄, 기대오차, 자본통제·거래비용, 유동성 차이, 중앙은행 개입, 시장참가자의 제한된 합리성이다."
+            ],
+            memorize: [
+              "UIP: i_t - i_t* = E_t Δs_{t+1}",
+              "위험프리미엄 포함: i_t - i_t* = E_t Δs_{t+1} + ρ_t",
+              "Fama puzzle: 고금리 통화가 UIP 예측만큼 절하되지 않거나 오히려 절상되는 현상",
+              "커버드 이자율평가(CIP)는 선물환으로 환위험을 제거, UIP는 기대환율을 사용"
+            ],
+            exam: [
+              "UIP가 안 맞는다고 바로 차익거래 기회라고 쓰면 안 된다. 환위험을 제거하지 않은 기대수익률 조건이기 때문이다.",
+              "실증문제에서는 위험프리미엄 ρ_t 또는 기대오차를 추가하면 UIP 괴리를 설명할 수 있다."
+            ]
+          },
+          {
+            keyword: "페소화 문제",
+            hint: "드문 대형 사건 가능성이 평균수익률과 예측오차를 왜곡하는 문제",
+            core: [
+              "페소화 문제는 시장참가자가 드물지만 큰 환율변동이나 정책전환 가능성을 가격에 반영했는데, 표본기간에는 그 사건이 실제로 발생하지 않아 사후적으로 예측오차가 편향되어 보이는 현상이다.",
+              "사람들이 평가절하 가능성을 합리적으로 예상하면 고금리나 위험프리미엄이 관측될 수 있지만, 표본 안에서 평가절하가 발생하지 않으면 UIP가 실패한 것처럼 보일 수 있다.",
+              "작은 표본에서 낮은 확률의 큰 사건을 충분히 관측하지 못하는 것이 핵심이다."
+            ],
+            memorize: [
+              "사전 기대: E_t Δs_{t+1} = p·large depreciation + (1-p)·normal change",
+              "표본 내 사건 미발생 => 사후 평균 Δs가 사전 기대보다 작게 관측",
+              "위험프리미엄과 구분: 페소화 문제는 희귀사건 기대, 위험프리미엄은 위험 보상"
+            ],
+            exam: [
+              "UIP 회귀에서 체계적 초과수익이 보일 때, 비합리성만이 아니라 페소화 문제를 대안 설명으로 제시할 수 있다.",
+              "답안에는 '사전적으로는 합리적 기대였지만 사후 표본에서는 사건이 관측되지 않았다'는 문장을 넣으면 좋다."
+            ]
+          },
+          {
+            keyword: "개방경제 정책",
+            hint: "먼델-플레밍과 환율제도",
+            core: ["자본이동성이 높으면 환율제도에 따라 정책효과가 크게 달라진다.", "고정환율에서는 통화정책 독립성이 약하다.", "변동환율에서는 재정정책 일부가 환율절상으로 상쇄된다."],
+            memorize: ["불가능한 삼위일체: 고정환율, 자유로운 자본이동, 독립적 통화정책을 동시에 달성 불가", "변동환율+자본이동: 통화정책 강함", "고정환율+자본이동: 재정정책 강함"],
+            exam: ["정책 변화 후 이자율, 자본유입, 환율, 순수출의 순서를 말로 풀어쓴다."]
+          }
+        ]
+      },
+      {
+        unit: "경제통계+계량경제",
+        items: [
+          {
+            keyword: "확률과 분포",
+            hint: "기댓값, 분산, 조건부확률",
+            core: ["확률변수의 평균적 위치와 흩어짐을 기댓값과 분산으로 요약한다.", "조건부기댓값은 정보가 주어졌을 때의 평균이다.", "표본평균은 큰 표본에서 모평균에 가까워진다."],
+            memorize: ["Var(X)=E[X²]-E[X]²", "Cov(X,Y)=E[XY]-E[X]E[Y]", "전기대 법칙: E[X]=E[E[X|Y]]"],
+            exam: ["조건부확률, 베이즈 정리, 공분산 계산은 식을 먼저 세운다."]
+          },
+          {
+            keyword: "추정과 검정",
+            hint: "불편성, 일치성, 신뢰구간",
+            core: ["추정량은 표본으로 모수를 맞히는 규칙이다.", "좋은 추정량은 불편성, 일치성, 효율성을 갖는다.", "가설검정은 표본증거가 귀무가설과 얼마나 모순되는지 판단한다."],
+            memorize: ["불편성: E[추정량]=모수", "일치성: 표본이 커질수록 추정량이 모수로 수렴", "p값은 귀무가설하에서 관측값 이상으로 극단적인 결과가 나올 확률"],
+            exam: ["검정통계량, 기각역, 유의수준, 검정력을 구분해 서술한다."]
+          },
+          {
+            keyword: "점근 정규성",
+            hint: "큰 표본에서 추정량 분포가 정규분포로 근사되는 성질",
+            core: [
+              "점근 정규성은 표본크기 n이 커질 때 적절히 표준화한 추정량이 정규분포로 수렴한다는 성질이다.",
+              "추정량 자체가 정확히 정규분포라는 뜻이 아니라, 큰 표본에서 근사적으로 정규분포를 쓸 수 있다는 뜻이다.",
+              "점근 정규성이 있으면 큰 표본에서 표준오차, z검정, Wald 검정, 신뢰구간을 만들 수 있다."
+            ],
+            memorize: [
+              "√n(θ_hat - θ_0) ->d N(0, V)",
+              "θ_hat ≈ N(θ_0, V/n) for large n",
+              "표준화: (θ_hat - θ_0) / se(θ_hat) ->d N(0,1)",
+              "핵심 재료: 중심극한정리(CLT) + 연속함수정리 + 델타메서드"
+            ],
+            exam: [
+              "일치성은 추정량이 참값으로 가까워지는 성질, 점근 정규성은 그 오차의 분포 모양을 말한다.",
+              "오차항 정규분포 가정이 없어도 큰 표본에서는 CLT로 점근 정규성이 성립할 수 있다.",
+              "표본이 작을 때의 정확한 t분포 결과와 큰 표본 점근 정규 근사를 구분한다."
+            ]
+          },
+          {
+            keyword: "OLS",
+            hint: "회귀분석의 기본",
+            core: ["OLS는 잔차제곱합을 최소화하는 직선을 찾는다.", "외생성 조건이 핵심이며, 조건부 평균 독립이 깨지면 편의가 생긴다.", "계수는 다른 변수를 통제한 한계효과로 해석한다."],
+            memorize: ["정규방정식: X'e = 0", "Gauss-Markov: 선형, 무작위표본, 완전공선성 없음, 외생성, 등분산", "BLUE: 선형불편추정량 중 최소분산"],
+            exam: ["누락변수편의 방향은 빠진 변수와 포함 변수의 상관, 빠진 변수의 종속변수 효과를 곱해 판단한다."]
+          },
+          {
+            keyword: "이분산·자기상관",
+            hint: "표준오차가 흔들리는 경우",
+            core: ["이분산이 있으면 OLS 계수는 외생성하에서 여전히 불편/일치지만 일반 표준오차가 틀릴 수 있다.", "시계열 자기상관은 잔차가 시간적으로 연결되는 문제다.", "강건 표준오차나 GLS로 대응한다."],
+            memorize: ["White robust SE: 이분산에 강건", "Newey-West SE: 이분산과 자기상관에 강건", "GLS는 오차구조를 알 때 효율 개선"],
+            exam: ["계수 편의 문제인지 표준오차 문제인지 먼저 구분한다."]
+          },
+          {
+            keyword: "더빈-왓슨 검정",
+            hint: "회귀 잔차의 1차 자기상관 검정",
+            core: [
+              "DW = Σ(e_t - e_{t-1})² / Σe_t² ≈ 2(1 - ρ̂)",
+              "DW ≈ 2: 자기상관 없음(ρ≈0), DW ≈ 0: 양의 자기상관(ρ≈1), DW ≈ 4: 음의 자기상관(ρ≈-1)",
+              "기각역은 하한 d_L과 상한 d_U 사이에 판단 불가(inconclusive) 구간이 존재한다.",
+              "라그변수를 포함한 모형이나 2차 이상 자기상관에는 Durbin h 검정이나 Breusch-Godfrey를 쓴다."
+            ],
+            memorize: [
+              "H0: ρ = 0 (자기상관 없음)",
+              "DW < d_L → 양의 자기상관 기각역",
+              "DW > 4-d_L → 음의 자기상관 기각역",
+              "d_L < DW < d_U → 판단 불가"
+            ],
+            exam: [
+              "DW 통계량 수치가 주어지면 자기상관 방향과 존재 여부를 판단한다.",
+              "자기상관이 있을 때 OLS 계수는 불편이지만 표준오차가 틀려 검정이 무효임을 함께 서술한다."
+            ]
+          },
+          {
+            keyword: "내생성과 IV",
+            hint: "도구변수와 식별",
+            core: ["설명변수가 오차항과 상관되면 내생성이 생긴다.", "도구변수는 내생변수와 상관되지만 오차항과는 상관되지 않아야 한다.", "2SLS는 1단계 예측값으로 2단계 회귀를 수행한다."],
+            memorize: ["관련성: Cov(Z,X) ≠ 0", "외생성: Cov(Z,u) = 0", "과잉식별이면 도구변수 외생성 검정을 생각할 수 있음"],
+            exam: ["도구변수의 타당성은 통계적 관련성과 경제학적 외생성 논리 둘 다 써야 한다."]
+          },
+          {
+            keyword: "GMM J검정",
+            hint: "과잉식별 제약이 자료와 맞는지 검정",
+            core: [
+              "GMM J검정은 추정에 사용한 모멘트 조건들이 전체적으로 타당한지 확인하는 과잉식별 검정이다.",
+              "도구변수 맥락에서는 도구변수들이 오차항과 상관되지 않는다는 외생성 조건을 묶어서 점검한다.",
+              "모멘트 조건 수가 추정할 모수 수보다 많을 때만 검정할 자유도가 생긴다.",
+              "효율적인 GMM은 모멘트 조건의 분산-공분산행렬 역행렬을 가중행렬로 사용한다."
+            ],
+            memorize: [
+              "H0: 모든 과잉식별 모멘트 조건이 타당하다",
+              "H1: 적어도 일부 모멘트 조건이 타당하지 않다",
+              "최적 가중행렬: W* = S^{-1}",
+              "S = Var(√n g_n(θ_0)) = E[f_i(θ_0) f_i(θ_0)']",
+              "표본 추정: S_hat = (1/n) Σ f_i(θ_hat) f_i(θ_hat)'",
+              "IV-GMM에서 f_i(β)=z_i u_i이면 S_hat = (1/n) Σ z_i z_i' u_hat_i²",
+              "J = n · g_hat(θ_hat)' W_hat g_hat(θ_hat)",
+              "J ~ χ²_{m-k}, m은 모멘트 조건 수, k는 추정 모수 수",
+              "2SLS에서는 Sargan/Hansen J 검정으로 자주 부른다"
+            ],
+            exam: [
+              "2-step GMM은 먼저 임의의 W로 추정한 뒤 잔차로 S_hat을 만들고, W_hat=S_hat^{-1}로 다시 추정한다.",
+              "동분산이면 IV-GMM의 최적 W가 E[z_i z_i']^{-1} 꼴로 단순화된다.",
+              "p값이 작으면 귀무가설을 기각하므로 도구변수 외생성 또는 모멘트 조건 전체에 문제가 있다고 본다.",
+              "p값이 크다고 도구변수가 반드시 옳다는 뜻은 아니고, 표본에서 위반 증거를 찾지 못했다는 뜻이다.",
+              "정확식별(m=k)에서는 J검정을 할 수 없다. 도구변수가 너무 적거나 딱 맞으면 과잉제약이 없기 때문이다.",
+              "J검정은 도구변수의 외생성을 보지만, 약한 도구변수 문제를 직접 해결하지는 못한다."
+            ]
+          },
+          {
+            keyword: "패널자료",
+            hint: "고정효과와 확률효과",
+            core: ["패널은 개인과 시간 차원을 동시에 가진다.", "고정효과는 시간불변 미관측 이질성을 제거한다.", "확률효과는 미관측효과가 설명변수와 상관없다는 강한 가정이 필요하다."],
+            memorize: ["FE: within 변환으로 개체 고정효과 제거", "RE: 더 효율적일 수 있지만 상관이 있으면 불일치", "Hausman 검정은 FE와 RE 선택에 자주 등장"],
+            exam: ["시간불변 변수 효과는 개체 고정효과 모형에서 별도로 식별하기 어렵다."]
+          },
+          {
+            keyword: "합동회귀·고정효과·확률효과 비교",
+            hint: "패널모형 선택과 검정법 정리",
+            core: [
+              "합동회귀(pooled OLS)는 개체별 고유효과가 없거나 무시 가능하다고 보고 모든 관측치를 하나의 횡단면처럼 합쳐 OLS를 추정한다.",
+              "고정효과(FE)는 개체별 시간불변 특성 α_i를 각 개체의 고유한 상수항으로 허용하고, α_i가 설명변수와 상관되어도 일치추정이 가능하다.",
+              "확률효과(RE)는 α_i를 확률적 오차성분으로 보고, α_i가 설명변수와 상관되지 않는다고 가정한다. 이 가정이 맞으면 FE보다 효율적이다.",
+              "핵심 선택 기준은 개체효과가 존재하는지, 그리고 개체효과가 설명변수와 상관되어 있는지다."
+            ],
+            memorize: [
+              "기본 모형: y_it = x_it'β + α_i + u_it",
+              "합동회귀: α_i = 0 또는 공통상수로 흡수 가능",
+              "FE: Cov(α_i, X_it) 허용, within 변환으로 α_i 제거",
+              "RE: Cov(α_i, X_it)=0 가정, GLS로 오차성분 구조 활용",
+              "합동 vs RE: Breusch-Pagan LM 검정, H0: Var(α_i)=0",
+              "합동 vs FE: 개체 더미 공동유의성 F검정, H0: α_1=...=α_N",
+              "RE vs FE: Hausman 검정, H0: Cov(α_i, X_it)=0"
+            ],
+            exam: [
+              "합동회귀 vs 확률효과: LM 검정에서 H0를 기각하면 개체효과 분산이 0이 아니므로 합동 OLS보다 RE가 적절하다.",
+              "합동회귀 vs 고정효과: F검정에서 개체더미가 공동으로 유의하면 개체별 고정효과가 필요하므로 FE를 고려한다.",
+              "확률효과 vs 고정효과: Hausman 검정 p값이 작으면 RE의 외생성 가정이 깨졌다고 보고 FE를 선택한다.",
+              "시간불변 설명변수 효과를 추정해야 하면 FE에서는 식별이 어렵고, RE는 가능하지만 Cov(α_i,X_it)=0 가정이 필요하다.",
+              "실무 답안 순서: 개체효과 존재 여부 확인(LM/F) -> RE 가정 타당성 확인(Hausman) -> FE/RE/pooled 선택."
+            ]
+          },
+          {
+            keyword: "하우스만 검정통계량",
+            hint: "고정효과와 확률효과 중 어느 추정량을 쓸지 판단",
+            core: [
+              "하우스만 검정은 두 추정량의 차이가 통계적으로 유의한지 보는 검정이다.",
+              "패널모형에서는 고정효과(FE)와 확률효과(RE) 추정량을 비교해, 개체효과가 설명변수와 상관되어 있는지 판단하는 데 자주 쓴다.",
+              "귀무가설하에서는 FE와 RE가 모두 일치추정량이지만 RE가 더 효율적이고, 대립가설하에서는 RE가 불일치하고 FE만 일치한다."
+            ],
+            memorize: [
+              "H0: Cov(α_i, X_it) = 0 → RE 일치, RE 선택 가능",
+              "H1: Cov(α_i, X_it) ≠ 0 → RE 불일치, FE 선택",
+              "H = (β_FE - β_RE)' [Var(β_FE) - Var(β_RE)]^{-1} (β_FE - β_RE)",
+              "H ~ χ²_k, k는 비교하는 계수 개수"
+            ],
+            exam: [
+              "p값이 작아 H0를 기각하면 개체효과와 설명변수가 상관된다고 보고 FE를 택한다.",
+              "p값이 크면 RE의 강한 가정을 기각하지 못하므로 효율적인 RE를 사용할 수 있다.",
+              "검정은 'FE가 항상 옳은지'가 아니라 'RE의 추가 가정이 자료와 충돌하는지'를 보는 절차다."
+            ]
+          },
+          {
+            keyword: "시계열",
+            hint: "단위근, 공적분, VAR",
+            core: ["시계열에서는 정상성 여부가 중요하다.", "단위근이 있으면 가성회귀 위험이 있다.", "비정상 변수들의 안정적 장기관계가 있으면 공적분이다."],
+            memorize: ["AR(1): |ρ|<1이면 정상", "단위근: ρ=1", "공적분이면 오차수정모형으로 단기조정과 장기관계를 함께 표현"],
+            exam: ["ADF 검정, 차분, 공적분 검정의 순서를 기억한다."]
+          }
+        ]
+      }
+    ]), ...([
+      {
+            "unit": "미시경제 심화",
+            "items": [
+                  {
+                        "keyword": "일반균형: 왈라스 법칙",
+                        "hint": "초과수요 함수와 시장청산의 핵심 항등식",
+                        "core": [
+                              "초과수요 z_i(p)=x_i(p,w)-e_i를 정의하면 모든 가격 p에 대해 p·z(p)=0.",
+                              "n개 시장 중 n-1개가 청산되면 남은 한 시장도 자동으로 청산된다.",
+                              "가격은 절대수준이 아니라 상대가격만 의미가 있으므로 한 재화를 numeraire로 둔다."
+                        ],
+                        "memorize": [
+                              "왈라스 법칙: ∑_{i=1}^{n} p_i z_i(p)=0",
+                              "동차성: z(λp)=z(p), λ>0",
+                              "균형: z_i(p*)=0 for all i"
+                        ],
+                        "exam": [
+                              "일반균형 문제에서는 예산제약을 모두 더해 왈라스 법칙부터 확인한다.",
+                              "가격 하나를 1로 정규화한 뒤 나머지 상대가격을 구한다."
+                        ]
+                  },
+                  {
+                        "keyword": "에지워스 박스와 계약곡선",
+                        "hint": "순수교환경제에서 파레토 효율 조건",
+                        "core": [
+                              "두 소비자의 MRS가 같으면 더 이상 상호이득 교환이 불가능하다.",
+                              "계약곡선은 파레토 효율 배분들의 집합이다.",
+                              "경쟁균형은 예산선이 두 무차별곡선에 공통접선이 되는 점이다."
+                        ],
+                        "memorize": [
+                              "파레토 효율: MRS_A = MRS_B",
+                              "예산선: p_x x_i + p_y y_i = p·e_i",
+                              "경쟁균형: 각자 효용극대화 + 시장청산"
+                        ],
+                        "exam": [
+                              "초기부존점에서 가격선을 그리고 각 소비자의 최적선택을 맞춰 시장청산을 확인한다."
+                        ]
+                  },
+                  {
+                        "keyword": "후생경제학 제1·2정리",
+                        "hint": "경쟁균형과 효율 배분의 연결",
+                        "core": [
+                              "제1정리는 완전경쟁 균형이 파레토 효율적이라는 명제다.",
+                              "제2정리는 적절한 초기부존 재분배 후 원하는 파레토 효율 배분을 경쟁균형으로 달성할 수 있다는 명제다.",
+                              "볼록성, 국소비포화, 완전시장 같은 조건이 중요하다."
+                        ],
+                        "memorize": [
+                              "제1정리: CE => Pareto efficient",
+                              "제2정리: Pareto efficient allocation => CE after redistribution",
+                              "실패 조건: 외부성, 공공재, 시장지배력, 정보비대칭, 비볼록성"
+                        ],
+                        "exam": [
+                              "시장실패가 제시되면 어느 정리의 조건이 깨지는지 명시한다."
+                        ]
+                  },
+                  {
+                        "keyword": "애로우-드브뢰 균형",
+                        "hint": "상태조건부 재화와 완전시장",
+                        "core": [
+                              "불확실성하에서 각 상태별·시점별 재화를 서로 다른 재화로 본다.",
+                              "완전시장이면 모든 상태조건부 청구권이 거래되고 위험배분이 효율적이다.",
+                              "균형가격은 상태별 한계효용과 확률을 반영한다."
+                        ],
+                        "memorize": [
+                              "상태가격 q_s: 상태 s에서 1을 지급하는 청구권의 현재가격",
+                              "위험중립확률: 상태가격을 무위험채 가격으로 정규화한 값",
+                              "완전시장: 상태 수만큼 독립적인 자산수익 벡터 존재"
+                        ],
+                        "exam": [
+                              "상태별 예산제약을 세우고 소비자의 상태별 MRS와 상태가격비를 연결한다."
+                        ]
+                  },
+                  {
+                        "keyword": "사회후생극대화와 라그랑주 승수",
+                        "hint": "효율조건을 빠르게 도출하는 방법",
+                        "core": [
+                              "사회계획자 문제를 풀면 경쟁균형의 효율조건을 한 번에 얻을 수 있다.",
+                              "자원제약의 승수는 그림자가격으로 해석된다.",
+                              "외부성이 있으면 사적 FOC와 사회계획자 FOC의 차이가 정책처방이 된다."
+                        ],
+                        "memorize": [
+                              "max W=∑_{i=1}^{n} α_i U_i(x_i) subject to ∑_{i=1}^{n} x_i ≤ ω",
+                              "FOC: α_i MU_i = λ",
+                              "효율조건: MRS_i = MRT 또는 MRS_A=MRS_B"
+                        ],
+                        "exam": [
+                              "효율성만 묻는 문제는 개인 최적화보다 사회계획자 문제를 먼저 세우면 빠르다."
+                        ]
+                  }
+            ]
+      },
+      {
+            "unit": "거시경제 심화",
+            "items": [
+                  {
+                        "keyword": "합리적 기대 해법: 미정계수법",
+                        "hint": "기대가 포함된 선형 차분방정식 풀이",
+                        "core": [
+                              "해의 형태를 추측하고 계수를 맞추는 방식이다.",
+                              "예: x_t = a E_t x_{t+1} + b z_t, z_t=ρz_{t-1}+ε_t이면 x_t=c z_t를 가정한다.",
+                              "E_t x_{t+1}=cρz_t를 대입해 c=b/(1-aρ)를 얻는다."
+                        ],
+                        "memorize": [
+                              "추측: x_t = c z_t",
+                              "대입: c z_t = a c ρ z_t + b z_t",
+                              "계수: c = b/(1-aρ)"
+                        ],
+                        "exam": [
+                              "외생충격이 AR(1)이면 같은 상태변수의 선형함수로 해를 추측한다."
+                        ]
+                  },
+                  {
+                        "keyword": "합리적 기대 해법: 전방반복",
+                        "hint": "버블 없는 해와 횡단조건",
+                        "core": [
+                              "미래기대항을 계속 앞으로 대입해 현재 변수를 미래 기초변수의 할인합으로 표현한다.",
+                              "폭발해를 제거하려면 횡단조건 또는 no-bubble 조건이 필요하다.",
+                              "자산가격, NK IS, 정부부채 평가식에서 자주 등장한다."
+                        ],
+                        "memorize": [
+                              "x_t = a E_t x_{t+1}+y_t",
+                              "전방해: x_t = ∑_{j=0}^{∞} a^j E_t y_{t+j}, |a|<1",
+                              "TVC: lim_{T→∞} a^T E_t x_{t+T}=0"
+                        ],
+                        "exam": [
+                              "문제에 안정해, 버블 없음, 횡단조건이 보이면 전방반복을 떠올린다."
+                        ]
+                  },
+                  {
+                        "keyword": "Blanchard-Kahn 조건",
+                        "hint": "합리적 기대 선형모형의 해 존재성과 유일성 조건",
+                        "core": [
+                              "Blanchard-Kahn 조건은 선형화된 합리적 기대 모형에서 안정적인 균형경로가 존재하고 유일한지 판정하는 조건이다.",
+                              "불안정 고유값의 개수가 전방변수(점프변수)의 개수와 같으면 유일한 안정해가 존재한다.",
+                              "불안정 고유값이 점프변수보다 많으면 안정경로를 맞출 자유도가 부족해 해가 존재하지 않는다.",
+                              "불안정 고유값이 점프변수보다 적으면 안정경로가 여러 개라서 비결정성(indeterminacy)이 생긴다."
+                        ],
+                        "memorize": [
+                              "결정성: #unstable roots = #forward-looking variables",
+                              "비존재: #unstable roots > #forward-looking variables",
+                              "비결정성: #unstable roots < #forward-looking variables",
+                              "불안정근: 이산시간에서는 |λ|>1, 연속시간에서는 Re(λ)>0"
+                        ],
+                        "exam": [
+                              "상태변수(predetermined)는 초기값이 주어져 즉시 점프할 수 없고, 전방변수(jump variable)는 기대에 따라 즉시 조정될 수 있다.",
+                              "문제에서 고유값과 전방변수 개수가 주어지면 세 경우(결정성·비존재·비결정성)를 먼저 판정한다.",
+                              "테일러 원칙 문제에서는 정책반응계수가 불안정근 개수를 충분히 만들어 결정성을 확보하는지 연결해 설명한다."
+                        ]
+                  },
+                  {
+                        "keyword": "뉴케인지언 3방정식",
+                        "hint": "IS, NKPC, 통화정책준칙",
+                        "core": [
+                              "산출갭은 기대 산출갭과 실질금리에 반응한다.",
+                              "인플레이션은 기대인플레이션과 실질한계비용 또는 산출갭에 반응한다.",
+                              "중앙은행은 인플레이션과 산출갭에 따라 명목금리를 조정한다."
+                        ],
+                        "memorize": [
+                              "IS: x_t=E_t x_{t+1}-(1/σ)(i_t-E_tπ_{t+1}-r_t^n)",
+                              "NKPC: π_t=βE_tπ_{t+1}+κx_t",
+                              "Taylor: i_t=ρ+φ_ππ_t+φ_x x_t"
+                        ],
+                        "exam": [
+                              "φ_π>1이면 테일러 원칙이 성립해 인플레이션 안정성이 커진다."
+                        ]
+                  },
+                  {
+                        "keyword": "충격반응함수(IRF)",
+                        "hint": "동태모형에서 한 번의 충격이 시간에 따라 미치는 효과",
+                        "core": [
+                              "AR(1) 충격 z_t=ρz_{t-1}+ε_t이면 충격 효과는 ρ^h로 감쇠한다.",
+                              "선형모형 해 x_t=A x_{t-1}+B ε_t에서 h기 후 반응은 A^hB와 관련된다.",
+                              "지속성 ρ가 클수록 충격반응이 오래 간다."
+                        ],
+                        "memorize": [
+                              "IRF_h = ∂x_{t+h}/∂ε_t",
+                              "AR(1): IRF_h = ρ^h",
+                              "VAR: IRF_h = A^h P, P는 충격 식별 행렬"
+                        ],
+                        "exam": [
+                              "그래프 해석 문제에서는 충격의 부호, 지속성, 수렴 여부를 분리해서 쓴다."
+                        ]
+                  }
+            ]
+      },
+      {
+            "unit": "국제경제 심화",
+            "items": [
+                  {
+                        "keyword": "통화적 환율결정 모형",
+                        "hint": "화폐시장 균형과 PPP로 환율을 설명",
+                        "core": [
+                              "국내외 화폐수요식과 구매력평가를 결합해 명목환율을 도출한다.",
+                              "국내 통화량 증가는 장기적으로 국내물가와 환율을 같은 방향으로 올린다.",
+                              "소득 증가는 화폐수요를 늘려 물가와 환율을 낮추는 방향으로 작용한다."
+                        ],
+                        "memorize": [
+                              "m-p = φy-λi",
+                              "m*-p* = φy*-λi*",
+                              "PPP: s=p-p*",
+                              "s=(m-m*)-φ(y-y*)+λ(i-i*)"
+                        ],
+                        "exam": [
+                              "통화량, 소득, 금리 차이가 주어지면 부호를 위 식으로 판단한다."
+                        ]
+                  },
+                  {
+                        "keyword": "Dornbusch 오버슈팅",
+                        "hint": "가격경직성과 빠른 자산시장 조정",
+                        "core": [
+                              "통화확대 후 장기적으로 환율은 통화량 증가만큼 상승한다.",
+                              "단기에는 물가가 경직적이라 실질통화공급이 늘고 금리가 하락한다.",
+                              "UIP를 만족하려면 환율이 장기수준보다 더 많이 절하된 뒤 점차 절상되어야 한다."
+                        ],
+                        "memorize": [
+                              "UIP: i_t-i_t* = E_t Δs_{t+1}",
+                              "단기 가격경직: p_t fixed",
+                              "오버슈팅: s_t가 장기 s보다 크게 반응"
+                        ],
+                        "exam": [
+                              "통화확대 직후: 금리 하락, 환율 급등, 이후 기대절상 경로를 설명한다."
+                        ]
+                  },
+                  {
+                        "keyword": "포트폴리오 밸런스 모형",
+                        "hint": "국내외 자산이 불완전대체일 때의 환율",
+                        "core": [
+                              "국내채권과 해외채권이 완전대체가 아니면 위험프리미엄이 환율에 영향을 준다.",
+                              "정부부채 구성, 외화자산 공급, 투자자 위험선호가 환율을 바꿀 수 있다.",
+                              "UIP에 위험프리미엄 항이 추가된다."
+                        ],
+                        "memorize": [
+                              "i_t = i_t* + E_t Δs_{t+1} + ρ_t",
+                              "ρ_t: 위험프리미엄",
+                              "자산공급 변화 => 포트폴리오 재조정 => 환율 변화"
+                        ],
+                        "exam": [
+                              "외환시장 개입 효과를 묻는 문제에서 불태화 개입은 이 모형과 연결한다."
+                        ]
+                  },
+                  {
+                        "keyword": "자산시장 접근법",
+                        "hint": "환율을 미래 기초변수의 현재가치로 보기",
+                        "core": [
+                              "환율은 현재 기초변수뿐 아니라 미래 기대에 크게 반응한다.",
+                              "뉴스 충격은 현재 통화량이나 소득이 변하기 전에도 환율을 움직인다.",
+                              "합리적 기대와 전방해가 핵심이다."
+                        ],
+                        "memorize": [
+                              "s_t = fundamentals_t + α E_t s_{t+1}",
+                              "전방해: s_t = Σ α^j E_t fundamentals_{t+j}",
+                              "기대 변화만으로 즉시 환율 변동 가능"
+                        ],
+                        "exam": [
+                              "미래 통화긴축 기대, 미래 생산성 변화 기대가 현재 환율에 미치는 효과를 묻는다."
+                        ]
+                  },
+                  {
+                        "keyword": "실질환율과 Balassa-Samuelson",
+                        "hint": "생산성 격차와 실질환율",
+                        "core": [
+                              "교역재 부문 생산성이 빠르게 오르면 임금이 상승한다.",
+                              "비교역재 가격도 함께 올라 물가수준이 높아지고 실질환율이 절상될 수 있다.",
+                              "고성장국의 높은 물가수준을 설명하는 데 쓰인다."
+                        ],
+                        "memorize": [
+                              "실질환율: q=s+p*-p",
+                              "q 하락을 실질절상으로 정의하는 교재가 많으므로 부호 확인",
+                              "교역재 생산성 상승 => 임금 상승 => 비교역재 가격 상승"
+                        ],
+                        "exam": [
+                              "실질환율 문제는 먼저 q의 정의와 절상/절하 부호를 명확히 쓴다."
+                        ]
+                  }
+            ]
+      },
+      {
+            "unit": "계량경제 심화",
+            "items": [
+                  {
+                        "keyword": "촐레스키 분해",
+                        "hint": "VAR 충격 식별과 직교화",
+                        "core": [
+                              "분산공분산행렬 Σ를 하삼각행렬 P와 그 전치의 곱으로 분해한다.",
+                              "VAR 잔차 u_t=P ε_t로 두면 ε_t는 서로 직교하는 구조충격이 된다.",
+                              "변수 순서가 결과에 영향을 주므로 경제학적 순서 가정이 필요하다."
+                        ],
+                        "memorize": [
+                              "Σ = P P'",
+                              "u_t = P ε_t, Var(ε_t)=I",
+                              "IRF_h = A^h P"
+                        ],
+                        "exam": [
+                              "촐레스키는 단기 동시효과에 재귀적 제약을 거는 식별 방법이라고 쓰면 좋다."
+                        ]
+                  },
+                  {
+                        "keyword": "왈드 통계량",
+                        "hint": "선형 제약 Rβ=r 검정",
+                        "core": [
+                              "추정된 계수가 특정 제약을 만족하는지 검정한다.",
+                              "큰 표본에서 왈드 통계량은 제약 개수 q의 카이제곱분포를 따른다.",
+                              "단일 제약이면 t검정의 제곱과 연결된다."
+                        ],
+                        "memorize": [
+                              "H0: Rβ=r",
+                              "W=(Rβ_hat-r)'[R Var(β_hat) R']^{-1}(Rβ_hat-r)",
+                              "W ~ χ²_q asymptotically"
+                        ],
+                        "exam": [
+                              "여러 계수의 동시가설을 보면 R행렬을 세우고 제약 개수 q를 센다."
+                        ]
+                  },
+                  {
+                        "keyword": "더빈-왓슨 검정",
+                        "hint": "1차 자기상관 진단",
+                        "core": [
+                              "회귀잔차의 1차 자기상관을 검정하는 통계량이다.",
+                              "값이 2 근처면 자기상관이 약하고, 0에 가까우면 양의 자기상관이 의심된다.",
+                              "시차종속변수가 설명변수에 있으면 표준 DW 검정 사용에 주의한다."
+                        ],
+                        "memorize": [
+                              "DW = [∑_{t=2}^{T} (e_t-e_{t-1})^2] / [∑_{t=1}^{T} e_t^2]",
+                              "근사: DW ≈ 2(1-rho_hat)",
+                              "양의 자기상관: DW < 2"
+                        ],
+                        "exam": [
+                              "DW 수치 해석 문제에서는 2보다 작은지 큰지로 자기상관 방향을 먼저 말한다."
+                        ]
+                  },
+                  {
+                        "keyword": "LM 검정",
+                        "hint": "보조회귀로 제약 또는 진단 검정",
+                        "core": [
+                              "귀무가설하에서 추정한 잔차를 이용해 보조회귀를 돌리는 검정이다.",
+                              "대표적으로 자기상관, 이분산, 누락변수 진단에 쓰인다.",
+                              "큰 표본에서 nR²가 카이제곱분포를 따른다."
+                        ],
+                        "memorize": [
+                              "LM = nR²",
+                              "LM ~ χ²_q",
+                              "Breusch-Godfrey: 잔차를 원 설명변수와 잔차시차에 회귀"
+                        ],
+                        "exam": [
+                              "LM 검정은 제한모형만 추정해도 된다는 점을 LR/Wald와 비교해 기억한다."
+                        ]
+                  },
+                  {
+                        "keyword": "LR·Wald·LM 비교",
+                        "hint": "세 가지 대표 대규모 표본 검정",
+                        "core": [
+                              "LR은 제한모형과 비제한모형의 우도 차이를 본다.",
+                              "Wald는 비제한모형 추정치가 제약에서 얼마나 떨어져 있는지 본다.",
+                              "LM은 제한모형에서 제약을 풀 방향의 기울기가 큰지 본다."
+                        ],
+                        "memorize": [
+                              "LR = 2(logL_U-logL_R)",
+                              "Wald: unrestricted estimate 기준",
+                              "LM: restricted estimate 기준",
+                              "세 검정은 큰 표본에서 χ²_q로 수렴"
+                        ],
+                        "exam": [
+                              "어떤 모형을 추정해야 하는지 묻는 문제에서 LR은 둘 다, Wald는 비제한, LM은 제한모형 중심이다."
+                        ]
+                  },
+                  {
+                        "keyword": "Breusch-Pagan 이분산 검정",
+                        "hint": "잔차제곱을 이용한 이분산 진단",
+                        "core": [
+                              "OLS 잔차제곱을 이분산을 설명할 변수들에 회귀한다.",
+                              "보조회귀의 설명력이 크면 오차분산이 일정하지 않다는 증거다.",
+                              "검정 후에는 robust 표준오차 또는 GLS를 고려한다."
+                        ],
+                        "memorize": [
+                              "보조회귀: e_hat² = γ0 + γ1 z1 + ... + v",
+                              "LM = nR² ~ χ²_q",
+                              "H0: homoskedasticity"
+                        ],
+                        "exam": [
+                              "이분산은 계수 편의보다 표준오차와 효율성 문제라는 점을 분리해서 쓴다."
+                        ]
+                  },
+                  {
+                        "keyword": "ADF 단위근 검정",
+                        "hint": "시계열 정상성 검정",
+                        "core": [
+                              "단위근이 있으면 충격의 효과가 영구적으로 남고 가성회귀 위험이 있다.",
+                              "ADF는 차분항의 시차를 추가해 잔차 자기상관을 통제한다.",
+                              "귀무가설은 단위근 존재다."
+                        ],
+                        "memorize": [
+                              "Δy_t = α + βt + γ y_{t-1} + Σ δ_i Δy_{t-i} + ε_t",
+                              "H0: γ=0 단위근",
+                              "H1: γ<0 정상"
+                        ],
+                        "exam": [
+                              "ADF는 일반 t분포 임계값이 아니라 Dickey-Fuller 임계값을 쓴다."
+                        ]
+                  },
+                  {
+                        "keyword": "공적분과 ECM",
+                        "hint": "비정상 변수들의 장기관계",
+                        "core": [
+                              "각 변수는 I(1)이지만 특정 선형결합이 I(0)이면 공적분 관계가 있다.",
+                              "공적분이 있으면 수준회귀가 장기관계를 의미할 수 있다.",
+                              "오차수정모형은 장기균형 이탈이 단기 변화에 미치는 조정을 표현한다."
+                        ],
+                        "memorize": [
+                              "y_t - βx_t = u_t, u_t ~ I(0)",
+                              "ECM: Δy_t = α(u_{t-1}) + 단기항 + ε_t",
+                              "α<0이면 장기균형으로 복귀"
+                        ],
+                        "exam": [
+                              "단위근 확인 -> 공적분 검정 -> ECM 설정 순서를 기억한다."
+                        ]
+                  }
+            ]
+      }
+])];
+    const QUESTIONS = [
+      {
+            "unit": "미시경제",
+            "keyword": "소비자 선택",
+            "q": "효용극대화의 내부해에서 성립하는 조건은?",
+            "choices": [
+                  "MRS = Px/Py",
+                  "MR = MC",
+                  "MPK = δ",
+                  "CA = S - I"
+            ],
+            "answer": 0,
+            "exp": "두 재화의 한계대체율이 가격비와 같아지는 지점이 내부해의 핵심 조건이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "예산제약",
+            "q": "소비자의 예산선 기울기를 결정하는 것은?",
+            "choices": [
+                  "소비자의 총효용",
+                  "기업의 한계비용",
+                  "정부부채",
+                  "두 재화의 상대가격"
+            ],
+            "answer": 3,
+            "exp": "예산선의 기울기는 -Px/Py로 상대가격이 결정한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "슬러츠키 분해",
+            "q": "가격 변화의 총효과를 나누는 두 효과는?",
+            "choices": [
+                  "기대효과와 피셔효과",
+                  "외생효과와 내생효과",
+                  "대체효과와 소득효과",
+                  "규모효과와 범위효과"
+            ],
+            "answer": 2,
+            "exp": "슬러츠키 분해는 가격 변화가 수요에 미치는 효과를 대체효과와 소득효과로 나눈다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "간접효용",
+            "q": "간접효용함수의 독립변수로 가장 적절한 것은?",
+            "choices": [
+                  "표본평균과 표본분산",
+                  "가격과 소득",
+                  "산출량과 한계비용",
+                  "환율과 관세"
+            ],
+            "answer": 1,
+            "exp": "간접효용은 주어진 가격과 소득에서 달성 가능한 최대 효용이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "지출함수",
+            "q": "지출함수는 무엇을 나타내는가?",
+            "choices": [
+                  "목표 효용을 달성하는 최소 지출",
+                  "주어진 산출량의 최대 이윤",
+                  "정부의 총조세수입",
+                  "수입품의 관세수입"
+            ],
+            "answer": 0,
+            "exp": "지출함수는 특정 효용 수준을 달성하는 데 필요한 최소 비용이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "생산자 선택",
+            "q": "비용최소화의 내부해 조건은?",
+            "choices": [
+                  "MRS = Px/Py",
+                  "UIP = PPP",
+                  "CA = S - I",
+                  "MRTS = w/r"
+            ],
+            "answer": 3,
+            "exp": "투입요소 간 기술적 한계대체율이 요소가격비와 같아진다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "이윤극대화",
+            "q": "기업의 일반적인 이윤극대화 조건은?",
+            "choices": [
+                  "E[u]=0",
+                  "Var(X)=0",
+                  "MR = MC",
+                  "MRS = MRT"
+            ],
+            "answer": 2,
+            "exp": "산출량을 한 단위 늘릴 때 추가수입과 추가비용이 같아지는 지점이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "완전경쟁",
+            "q": "완전경쟁 기업이 가격수용자라는 말의 의미는?",
+            "choices": [
+                  "한계비용이 항상 0이다",
+                  "개별 기업이 시장가격에 영향을 주지 못한다",
+                  "기업이 반드시 손실을 본다",
+                  "수요곡선이 우상향한다"
+            ],
+            "answer": 1,
+            "exp": "개별 기업의 규모가 작아 시장가격을 주어진 것으로 받아들인다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "시장공급",
+            "q": "완전경쟁 시장공급곡선은 개별 기업 공급곡선을 어떻게 합쳐 얻는가?",
+            "choices": [
+                  "수평합",
+                  "수직합",
+                  "기하평균",
+                  "최댓값만 선택"
+            ],
+            "answer": 0,
+            "exp": "같은 가격에서 각 기업의 공급량을 더하므로 수평합이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "후생경제학",
+            "q": "후생경제학 제1정리의 핵심은?",
+            "choices": [
+                  "독점균형은 항상 효율적이다",
+                  "모든 조세는 효율적이다",
+                  "공공재는 시장에서 항상 충분히 공급된다",
+                  "적절한 조건에서 경쟁균형은 파레토 효율적이다"
+            ],
+            "answer": 3,
+            "exp": "외부성, 정보비대칭 등 시장실패가 없을 때 경쟁균형은 파레토 효율적이다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "독점",
+            "q": "독점기업의 가격과 한계수입 관계로 맞는 것은?",
+            "choices": [
+                  "가격과 한계수입은 항상 같다",
+                  "한계수입은 항상 0이다",
+                  "수요가 우하향하면 가격은 한계수입보다 크다",
+                  "가격은 항상 한계수입보다 작다"
+            ],
+            "answer": 2,
+            "exp": "가격을 낮춰야 더 팔 수 있으므로 추가 판매의 한계수입은 가격보다 작다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "가격차별",
+            "q": "3급 가격차별에서 더 높은 가격이 부과되는 시장은?",
+            "choices": [
+                  "소득효과가 없는 시장",
+                  "수요의 가격탄력성이 낮은 시장",
+                  "수요의 가격탄력성이 높은 시장",
+                  "한계비용이 0인 시장"
+            ],
+            "answer": 1,
+            "exp": "탄력성이 낮을수록 가격 인상에 수요가 덜 반응하므로 더 높은 가격이 가능하다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "이부가격",
+            "q": "이부가격제의 구성으로 맞는 것은?",
+            "choices": [
+                  "가입비와 사용가격",
+                  "관세와 쿼터",
+                  "세율과 표준오차",
+                  "고정환율과 변동환율"
+            ],
+            "answer": 0,
+            "exp": "이부가격은 고정요금과 단위당 가격을 조합한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "게임이론",
+            "q": "내쉬균형의 정의로 맞는 것은?",
+            "choices": [
+                  "모든 사람이 같은 전략을 고른다",
+                  "사회후생이 항상 최대다",
+                  "담합이 반드시 유지된다",
+                  "각자의 전략이 상대 전략에 대한 최적반응이다"
+            ],
+            "answer": 3,
+            "exp": "누구도 혼자 전략을 바꿔 이득을 볼 수 없는 상태다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "순차게임",
+            "q": "순차게임을 푸는 대표적 방법은?",
+            "choices": [
+                  "차분",
+                  "구매력평가",
+                  "역진귀납",
+                  "최소제곱법"
+            ],
+            "answer": 2,
+            "exp": "게임의 마지막 의사결정부터 거꾸로 풀어 부분게임완전균형을 찾는다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "혼합전략",
+            "q": "혼합전략 균형에서 상대방의 혼합확률은 보통 무엇을 만들도록 정해지는가?",
+            "choices": [
+                  "환율을 고정하도록",
+                  "내가 순수전략 사이에서 무차별하도록",
+                  "내 효용을 0으로 만들도록",
+                  "시장청산을 막도록"
+            ],
+            "answer": 1,
+            "exp": "상대의 확률은 내 여러 순수전략의 기대보수가 같아지게 만든다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "역선택",
+            "q": "역선택은 언제 발생하는 정보문제인가?",
+            "choices": [
+                  "거래 전 숨은 유형이 있을 때",
+                  "거래 후 숨은 행동이 있을 때",
+                  "모든 정보가 공개될 때",
+                  "가격이 고정될 때"
+            ],
+            "answer": 0,
+            "exp": "거래 전에 품질이나 능력 같은 유형을 한쪽만 알고 있을 때 발생한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "도덕적 해이",
+            "q": "도덕적 해이는 어떤 정보문제인가?",
+            "choices": [
+                  "거래 전 유형을 모두 아는 문제",
+                  "재화가 비경합적인 문제",
+                  "시계열이 비정상인 문제",
+                  "거래 후 행동을 관찰하기 어려운 문제"
+            ],
+            "answer": 3,
+            "exp": "계약 후 노력이나 위험추구 행동을 완전히 감시할 수 없을 때 생긴다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "계약이론",
+            "q": "계약문제에서 IR 제약은 무엇인가?",
+            "choices": [
+                  "가격이 한계비용과 같아야 한다",
+                  "오차항 평균이 0이어야 한다",
+                  "계약 참여로 얻는 효용이 외부기회보다 낮지 않아야 한다",
+                  "원하는 행동이 최적반응이어야 한다"
+            ],
+            "answer": 2,
+            "exp": "참여제약은 계약을 받아들일 최소 효용을 보장한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "계약이론",
+            "q": "계약문제에서 IC 제약은 무엇인가?",
+            "choices": [
+                  "표본크기가 무한해야 한다",
+                  "원하는 행동이나 유형 선택이 스스로 최적이어야 한다",
+                  "정부예산이 균형이어야 한다",
+                  "모든 소비자의 소득이 같아야 한다"
+            ],
+            "answer": 1,
+            "exp": "유인양립제약은 설계자가 의도한 선택을 대리인이 자발적으로 하게 만든다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "외부성",
+            "q": "부정적 외부성이 있을 때 경쟁시장 산출량은 사회적 최적에 비해 보통 어떤가?",
+            "choices": [
+                  "과다 생산된다",
+                  "과소 생산된다",
+                  "항상 같다",
+                  "0이 된다"
+            ],
+            "answer": 0,
+            "exp": "사적 비용이 사회적 비용보다 낮게 계산되어 생산이 과다해진다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "피구세",
+            "q": "부정적 외부성을 교정하는 피구세의 크기는?",
+            "choices": [
+                  "평균고정비용",
+                  "소비자잉여",
+                  "표준오차",
+                  "한계외부비용"
+            ],
+            "answer": 3,
+            "exp": "피구세는 사적 의사결정에 외부비용을 반영하게 한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "공공재",
+            "q": "공공재의 사회적 최적 조건은?",
+            "choices": [
+                  "MR = MC = 0",
+                  "UIP = PPP",
+                  "개별 MRS의 합 = MRT",
+                  "개별 MRS = MRT"
+            ],
+            "answer": 2,
+            "exp": "공공재는 함께 소비하므로 각 개인의 한계편익을 합산한다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "코즈정리",
+            "q": "코즈정리가 성립하기 위한 핵심 조건은?",
+            "choices": [
+                  "표본이 작다",
+                  "거래비용이 충분히 낮다",
+                  "정보가 반드시 비대칭이다",
+                  "시장지배력이 크다"
+            ],
+            "answer": 1,
+            "exp": "재산권이 명확하고 거래비용이 없거나 낮으면 사적 협상으로 효율을 달성할 수 있다."
+      },
+      {
+            "unit": "미시경제",
+            "keyword": "일반균형",
+            "q": "왈라스 법칙의 내용은?",
+            "choices": [
+                  "가격가중 초과수요의 합은 0이다",
+                  "모든 시장의 수요가 항상 0이다",
+                  "독점가격은 한계비용과 같다",
+                  "경상수지는 항상 흑자다"
+            ],
+            "answer": 0,
+            "exp": "각 경제주체의 예산제약에서 전체 초과수요 가치의 합이 0이 된다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "솔로 모형",
+            "q": "솔로 모형의 정상상태 조건은?",
+            "choices": [
+                  "MR = MC",
+                  "MRS = Px/Py",
+                  "CA = S - I",
+                  "s f(k) = (n+g+δ)k"
+            ],
+            "answer": 3,
+            "exp": "투자가 자본희석과 감가상각을 정확히 보전할 때 정상상태다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "황금률",
+            "q": "솔로 모형의 황금률 조건은?",
+            "choices": [
+                  "P = AVC",
+                  "Cov(Z,u)=0",
+                  "MPK = n+g+δ",
+                  "MRS = MRT"
+            ],
+            "answer": 2,
+            "exp": "소비를 극대화하는 자본수준에서 자본의 순한계생산이 성장과 감가상각 비용과 맞는다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "성장회계",
+            "q": "성장회계에서 잔차로 해석되는 것은?",
+            "choices": [
+                  "표본분산",
+                  "총요소생산성 증가",
+                  "감가상각률",
+                  "관세율"
+            ],
+            "answer": 1,
+            "exp": "투입 증가로 설명되지 않는 산출 증가분은 TFP 증가로 해석된다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "소비이론",
+            "q": "영구소득가설의 핵심은?",
+            "choices": [
+                  "소비는 일시소득보다 영구소득에 더 반응한다",
+                  "소비는 현재소득에만 반응한다",
+                  "소비는 이자율과 무관하다",
+                  "소비는 항상 0이다"
+            ],
+            "answer": 0,
+            "exp": "가계는 평생자원을 고려해 소비를 평탄화하려 한다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "오일러 방정식",
+            "q": "소비 오일러 방정식은 무엇을 비교하는가?",
+            "choices": [
+                  "국내가격과 해외가격",
+                  "표본평균과 모평균",
+                  "수입과 관세",
+                  "현재소비와 미래소비의 한계효용"
+            ],
+            "answer": 3,
+            "exp": "기간 간 최적화에서 오늘 소비의 가치와 저축 후 내일 소비의 가치를 비교한다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "투자",
+            "q": "q이론에서 q가 1보다 크면 일반적으로 어떤 유인이 생기는가?",
+            "choices": [
+                  "항상 투자 0",
+                  "정부지출 감소 의무",
+                  "투자 증가 유인",
+                  "투자 감소 유인"
+            ],
+            "answer": 2,
+            "exp": "설치된 자본의 시장가치가 대체비용보다 높으면 새 자본을 늘릴 유인이 있다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "IS곡선",
+            "q": "IS곡선이 나타내는 시장은?",
+            "choices": [
+                  "노동계약시장",
+                  "재화시장",
+                  "화폐시장",
+                  "외환시장"
+            ],
+            "answer": 1,
+            "exp": "IS는 총수요와 산출이 일치하는 재화시장 균형 조합이다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "LM곡선",
+            "q": "LM곡선이 나타내는 조건은?",
+            "choices": [
+                  "실질화폐공급과 화폐수요의 일치",
+                  "투자와 감가상각의 일치",
+                  "수입과 수출의 일치",
+                  "잔차와 설명변수의 상관"
+            ],
+            "answer": 0,
+            "exp": "LM은 M/P = L(Y,i)를 만족하는 조합이다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "유동성함정",
+            "q": "유동성함정에서 통화정책 효과가 약한 이유는?",
+            "choices": [
+                  "정부지출이 불가능해서",
+                  "생산함수가 사라져서",
+                  "물가가 항상 폭등해서",
+                  "화폐수요가 이자율에 매우 민감해 금리가 잘 내려가지 않는다"
+            ],
+            "answer": 3,
+            "exp": "LM이 거의 수평이면 통화량 확대가 금리를 크게 낮추기 어렵다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "AD-AS",
+            "q": "단기 총공급곡선이 우상향할 수 있는 대표 이유는?",
+            "choices": [
+                  "모든 정보의 즉시 공개",
+                  "관세율 0",
+                  "가격 또는 임금 경직성",
+                  "완전한 가격 신축성"
+            ],
+            "answer": 2,
+            "exp": "가격/임금이 즉시 조정되지 않으면 수요 변화가 산출에 영향을 준다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "뉴케인지언 IS",
+            "q": "뉴케인지언 IS곡선에서 산출갭은 보통 무엇에 음으로 반응하는가?",
+            "choices": [
+                  "수입쿼터",
+                  "실질금리",
+                  "정부부채의 장부가",
+                  "표본크기"
+            ],
+            "answer": 1,
+            "exp": "실질금리가 높아지면 현재 소비와 투자가 줄어 산출갭이 낮아진다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "필립스곡선",
+            "q": "뉴케인지언 필립스곡선에서 인플레이션을 설명하는 핵심 변수는?",
+            "choices": [
+                  "기대인플레이션과 한계비용",
+                  "관세수입과 쿼터렌트",
+                  "표본평균과 표본분산",
+                  "MRS와 MRT"
+            ],
+            "answer": 0,
+            "exp": "가격 설정 기업의 기대와 비용 압력이 인플레이션을 좌우한다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "테일러 준칙",
+            "q": "테일러 원칙의 핵심은?",
+            "choices": [
+                  "금리를 항상 0으로 둔다",
+                  "재정적자를 금지한다",
+                  "환율을 항상 고정한다",
+                  "인플레이션 상승보다 명목금리를 더 크게 올린다"
+            ],
+            "answer": 3,
+            "exp": "명목금리가 인플레보다 더 크게 반응해야 실질금리가 올라 안정화된다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "통화승수",
+            "q": "통화승수를 작게 만드는 요인은?",
+            "choices": [
+                  "지급준비율 하락",
+                  "예금창출 확대",
+                  "현금보유율 또는 지급준비율 상승",
+                  "현금보유율 하락"
+            ],
+            "answer": 2,
+            "exp": "현금 누출과 지급준비 증가는 은행의 예금창출 능력을 낮춘다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "공개시장조작",
+            "q": "중앙은행의 공개시장매입 효과는?",
+            "choices": [
+                  "수출량 0",
+                  "본원통화 증가",
+                  "본원통화 감소",
+                  "정부지출 자동 감소"
+            ],
+            "answer": 1,
+            "exp": "중앙은행이 채권을 사면 대가로 지급한 준비금이 늘어난다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "피셔방정식",
+            "q": "피셔방정식의 근사식은?",
+            "choices": [
+                  "실질금리 = 명목금리 - 기대인플레이션",
+                  "실질금리 = 명목금리 + 기대인플레이션",
+                  "명목금리 = 환율 - 관세",
+                  "실질금리 = 표본평균"
+            ],
+            "answer": 0,
+            "exp": "명목금리에서 기대 물가상승률을 뺀 값이 사전 실질금리다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "채권",
+            "q": "채권가격과 수익률의 관계는?",
+            "choices": [
+                  "항상 같은 방향",
+                  "항상 무관",
+                  "항상 1대1 고정",
+                  "반대 방향"
+            ],
+            "answer": 3,
+            "exp": "할인율이 오르면 고정된 미래 현금흐름의 현재가치는 낮아진다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "기간구조",
+            "q": "기대가설에서 장기금리는 무엇과 관련되는가?",
+            "choices": [
+                  "현재 실업자 수만",
+                  "표본의 최댓값",
+                  "미래 단기금리 기대의 평균",
+                  "현재 관세율"
+            ],
+            "answer": 2,
+            "exp": "장기채 수익률은 미래 단기금리 경로에 대한 기대를 반영한다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "은행",
+            "q": "은행의 만기불일치가 만드는 대표 위험은?",
+            "choices": [
+                  "비교우위 소멸",
+                  "뱅크런",
+                  "공공재 과소공급",
+                  "가성회귀"
+            ],
+            "answer": 1,
+            "exp": "단기예금으로 장기대출을 하면 예금자가 동시에 인출할 때 유동성 문제가 발생한다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "예금보험",
+            "q": "예금보험의 장점과 부작용은?",
+            "choices": [
+                  "뱅크런 완화와 도덕적 해이 가능성",
+                  "인플레이션 제거와 실업 제거",
+                  "환율 안정과 무역수지 제거",
+                  "표본오차 제거와 편의 제거"
+            ],
+            "answer": 0,
+            "exp": "예금자 불안을 낮추지만 은행의 위험추구 유인을 높일 수 있다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "금융마찰",
+            "q": "위험프리미엄 상승의 일반적 효과는?",
+            "choices": [
+                  "투자와 총수요 증가",
+                  "한계비용 0",
+                  "경상수지 공식 폐기",
+                  "투자와 총수요 위축"
+            ],
+            "answer": 3,
+            "exp": "자금조달비용이 올라 기업투자와 지출이 줄어든다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "정부예산제약",
+            "q": "정부부채 안정성에서 중요한 비교는?",
+            "choices": [
+                  "관세율과 쿼터",
+                  "표본평균과 중앙값",
+                  "이자율과 성장률",
+                  "탄력성과 MRS"
+            ],
+            "answer": 2,
+            "exp": "성장률보다 이자율이 높으면 같은 기초재정수지에서 부채비율 관리가 어려워진다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "리카도 동등성",
+            "q": "리카도 동등성이 말하는 것은?",
+            "choices": [
+                  "무역은 항상 손해다",
+                  "감세가 미래 증세 기대를 통해 소비를 크게 늘리지 않을 수 있다",
+                  "정부지출은 항상 무효다",
+                  "화폐수요는 항상 0이다"
+            ],
+            "answer": 1,
+            "exp": "합리적 가계가 정부예산제약을 내재화하면 현재 감세를 저축할 수 있다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "재정승수",
+            "q": "구축효과는 무엇을 의미하는가?",
+            "choices": [
+                  "정부지출 증가가 이자율 상승 등을 통해 민간투자를 밀어낼 수 있음",
+                  "공공재의 비배제성",
+                  "도구변수의 관련성",
+                  "수입관세의 정부수입"
+            ],
+            "answer": 0,
+            "exp": "재정확대가 이자율을 올려 민간부문 지출을 일부 상쇄할 수 있다."
+      },
+      {
+            "unit": "거시경제+화폐금융",
+            "keyword": "RBC",
+            "q": "RBC 모형에서 경기변동의 대표적 원천은?",
+            "choices": [
+                  "관세수입",
+                  "표본추출오차",
+                  "가격상한제",
+                  "기술충격"
+            ],
+            "answer": 3,
+            "exp": "실물경기변동 모형은 생산성 충격에 대한 최적 반응으로 경기변동을 설명한다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "리카도 모형",
+            "q": "리카도 무역이론에서 무역의 직접 원인은?",
+            "choices": [
+                  "화폐수요 증가",
+                  "표준오차 감소",
+                  "상대적 생산비 차이",
+                  "절대우위만"
+            ],
+            "answer": 2,
+            "exp": "비교우위는 절대우위가 아니라 상대적 기회비용 차이에서 나온다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "비교우위",
+            "q": "한 나라가 모든 재화에서 절대우위가 있어도 무역이 가능한 이유는?",
+            "choices": [
+                  "표본이 작아서",
+                  "재화별 기회비용이 다를 수 있어서",
+                  "절대우위가 무역을 금지해서",
+                  "화폐가 없어서"
+            ],
+            "answer": 1,
+            "exp": "상대적으로 더 잘하는 재화에 특화하면 양국 모두 이익을 얻을 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "헥셔-올린",
+            "q": "헥셔-올린 정리의 예측은?",
+            "choices": [
+                  "풍부한 요소를 집약적으로 쓰는 재화를 수출",
+                  "희소한 요소를 집약적으로 쓰는 재화를 수출",
+                  "모든 국가가 같은 재화를 수출",
+                  "수입은 항상 0"
+            ],
+            "answer": 0,
+            "exp": "요소부존 차이가 비교우위를 만든다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "스톨퍼-새뮤얼슨",
+            "q": "스톨퍼-새뮤얼슨 정리의 핵심은?",
+            "choices": [
+                  "재화가격 상승은 모든 요소보수를 낮춘다",
+                  "관세는 항상 세계후생을 올린다",
+                  "환율은 고정된다",
+                  "재화가격 상승은 그 재화 집약요소의 실질보수를 올린다"
+            ],
+            "answer": 3,
+            "exp": "무역이 소득분배에 영향을 주는 핵심 정리다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "립친스키",
+            "q": "립친스키 정리의 내용으로 맞는 것은?",
+            "choices": [
+                  "소비자잉여가 0이 된다",
+                  "통화승수가 증가한다",
+                  "한 요소 증가가 그 요소 집약재 생산을 늘린다",
+                  "모든 재화 생산이 같은 비율로 증가한다"
+            ],
+            "answer": 2,
+            "exp": "재화가격이 주어졌을 때 요소부존 변화가 생산구조를 바꾼다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "특정요소",
+            "q": "특정요소모형에서 단기적으로 무역개방의 소득분배 효과는?",
+            "choices": [
+                  "요소가격이 변하지 않는다",
+                  "이동불가능한 특정요소 소유자 간 이해가 갈린다",
+                  "모든 요소 소유자가 같은 이익을 얻는다",
+                  "노동은 항상 손실만 본다"
+            ],
+            "answer": 1,
+            "exp": "수출부문 특정요소는 이익, 수입경쟁부문 특정요소는 손실을 볼 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "규모의 경제",
+            "q": "규모의 경제와 제품차별화가 무역을 설명하는 모형은?",
+            "choices": [
+                  "독점적 경쟁 무역모형",
+                  "단순 리카도 모형만",
+                  "솔로 모형",
+                  "OLS 모형"
+            ],
+            "answer": 0,
+            "exp": "유사한 국가 간 산업내무역을 설명하는 데 쓰인다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "Melitz 모형",
+            "q": "Melitz 모형에서 수출기업의 특징은?",
+            "choices": [
+                  "생산성이 가장 낮다",
+                  "고정비용이 없어서 모두 수출한다",
+                  "관세만 낸다",
+                  "생산성이 상대적으로 높다"
+            ],
+            "answer": 3,
+            "exp": "수출에는 고정비용이 있어 생산성이 높은 기업만 진입한다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "관세",
+            "q": "소국이 수입관세를 부과하면 일반적으로 순후생은?",
+            "choices": [
+                  "변하지 않는다",
+                  "항상 무한대가 된다",
+                  "감소한다",
+                  "반드시 증가한다"
+            ],
+            "answer": 2,
+            "exp": "세계가격을 바꾸지 못하는 소국은 소비/생산 왜곡에 따른 사중손실을 부담한다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "쿼터",
+            "q": "수입쿼터에서 쿼터렌트의 귀속은 무엇에 좌우되는가?",
+            "choices": [
+                  "오일러 방정식",
+                  "수입권 배분 방식",
+                  "표본평균",
+                  "통화승수"
+            ],
+            "answer": 1,
+            "exp": "수입권을 누가 갖는지에 따라 렌트가 국내업자, 해외업자, 정부 등에 갈 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "유효보호율",
+            "q": "유효보호율은 무엇을 기준으로 보호 정도를 보는가?",
+            "choices": [
+                  "부가가치",
+                  "총매출만",
+                  "표본분산",
+                  "명목환율"
+            ],
+            "answer": 0,
+            "exp": "최종재와 중간재 관세가 국내 부가가치에 미치는 보호효과를 측정한다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "전략적 무역정책",
+            "q": "전략적 무역정책이 논의되는 대표 상황은?",
+            "choices": [
+                  "완전경쟁 소국",
+                  "정보가 전혀 없는 통계문제",
+                  "공공재만 있는 경제",
+                  "불완전경쟁과 초과이윤이 있는 산업"
+            ],
+            "answer": 3,
+            "exp": "정부개입으로 해외기업의 이윤을 국내기업으로 이전할 가능성이 논의된다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "경상수지",
+            "q": "경상수지 항등식으로 맞는 것은?",
+            "choices": [
+                  "CA = Var(X)",
+                  "CA = MRS",
+                  "CA = S - I",
+                  "CA = MR - MC"
+            ],
+            "answer": 2,
+            "exp": "경상수지는 국민저축과 국내투자의 차이다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "대외순자산",
+            "q": "경상수지 흑자가 지속되면 대체로 어떤 변화가 생기는가?",
+            "choices": [
+                  "모든 수입 중단",
+                  "대외순자산 증가",
+                  "대외순자산 감소",
+                  "통화승수 0"
+            ],
+            "answer": 1,
+            "exp": "경상수지 흑자는 해외에 대한 순청구권을 늘린다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "국제수지",
+            "q": "국제수지에서 경상수지와 금융계정은 회계적으로 어떤 관계인가?",
+            "choices": [
+                  "서로 대응된다",
+                  "항상 둘 다 흑자다",
+                  "항상 무관하다",
+                  "둘 다 0이어야 한다"
+            ],
+            "answer": 0,
+            "exp": "한 나라의 대외거래는 실물거래와 자산거래가 회계적으로 연결된다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "PPP",
+            "q": "구매력평가설(PPP)의 근사식은?",
+            "choices": [
+                  "환율변화율 ≈ 국내금리 + 해외금리",
+                  "환율 = 표본분산",
+                  "환율 = 한계비용",
+                  "환율변화율 ≈ 국내물가상승률 - 해외물가상승률"
+            ],
+            "answer": 3,
+            "exp": "동일한 재화 가격이 장기적으로 통화 간 구매력을 연결한다는 생각이다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "UIP",
+            "q": "무위험 이자율평가(UIP)의 핵심은?",
+            "choices": [
+                  "수요곡선이 수직이다",
+                  "OLS 잔차합이 1이다",
+                  "금리차가 기대환율변화와 연결된다",
+                  "관세가 물가를 결정한다"
+            ],
+            "answer": 2,
+            "exp": "자본이 자유롭게 이동하면 금리차와 기대 절하율이 연결된다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "오버슈팅",
+            "q": "환율 오버슈팅이 발생하는 대표 이유는?",
+            "choices": [
+                  "표본이 무한대이기 때문",
+                  "상품가격은 느리게, 금융가격은 빠르게 조정되기 때문",
+                  "모든 가격이 즉시 조정되기 때문",
+                  "관세가 없기 때문"
+            ],
+            "answer": 1,
+            "exp": "가격경직성이 있을 때 통화충격에 환율이 장기수준보다 과하게 움직일 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "먼델-플레밍",
+            "q": "자본이동성이 높고 변동환율제일 때 상대적으로 강한 정책은?",
+            "choices": [
+                  "통화정책",
+                  "재정정책만",
+                  "관세정책만",
+                  "표본추출"
+            ],
+            "answer": 0,
+            "exp": "통화확대는 환율절하와 순수출 증가를 통해 산출을 늘릴 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "고정환율",
+            "q": "자본이동성이 높고 고정환율제일 때 독립적 통화정책이 어려운 이유는?",
+            "choices": [
+                  "정부지출이 금지되기 때문",
+                  "수출이 항상 0이기 때문",
+                  "통계검정이 불가능해서",
+                  "환율 유지를 위해 중앙은행이 개입해야 하기 때문"
+            ],
+            "answer": 3,
+            "exp": "금리차가 자본이동을 만들면 환율 방어를 위한 통화량 조정이 필요하다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "불가능한 삼위일체",
+            "q": "불가능한 삼위일체의 세 요소가 아닌 것은?",
+            "choices": [
+                  "자유로운 자본이동",
+                  "독립적 통화정책",
+                  "완전한 가격차별",
+                  "고정환율"
+            ],
+            "answer": 2,
+            "exp": "세 가지를 동시에 달성할 수 없다는 것이 국제금융의 기본 명제다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "J커브",
+            "q": "J커브 효과는 무엇을 설명하는가?",
+            "choices": [
+                  "채권가격이 금리와 같은 방향",
+                  "환율절하 후 무역수지가 단기 악화 후 개선될 수 있음",
+                  "관세가 항상 복지를 늘림",
+                  "표본평균이 항상 모평균과 같음"
+            ],
+            "answer": 1,
+            "exp": "계약과 수량 조정 지연 때문에 단기와 장기 효과가 다를 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "마셜-러너",
+            "q": "마셜-러너 조건은 무엇과 관련되는가?",
+            "choices": [
+                  "환율절하가 무역수지를 개선할 조건",
+                  "독점가격 설정 조건",
+                  "OLS 불편성 조건",
+                  "공공재 최적조건"
+            ],
+            "answer": 0,
+            "exp": "수출입 수요탄력성 합이 충분히 커야 절하가 무역수지를 개선한다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "통화위기",
+            "q": "자기실현적 통화위기 설명으로 맞는 것은?",
+            "choices": [
+                  "위기는 항상 불가능하다",
+                  "외환보유액은 무관하다",
+                  "관세가 위기를 제거한다",
+                  "시장 기대가 실제 위기를 유발할 수 있다"
+            ],
+            "answer": 3,
+            "exp": "투자자들의 평가와 공격이 정책당국의 방어능력을 약화시킬 수 있다."
+      },
+      {
+            "unit": "국제경제",
+            "keyword": "외환보유액",
+            "q": "외환보유액의 주요 기능은?",
+            "choices": [
+                  "표본분산 계산",
+                  "공공재 사적 공급",
+                  "외화유동성 충격에 대응",
+                  "국내 독점가격 결정"
+            ],
+            "answer": 2,
+            "exp": "외환보유액은 대외지급과 금융불안 상황의 완충장치다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "기댓값",
+            "q": "전기대 법칙으로 맞는 것은?",
+            "choices": [
+                  "E[X] = P(X)",
+                  "E[X] = E[E[X|Y]]",
+                  "E[X] = Var(X)",
+                  "E[X|Y] = 0 항상"
+            ],
+            "answer": 1,
+            "exp": "조건부기댓값을 다시 평균하면 원래 기댓값이 된다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "분산",
+            "q": "분산 공식으로 맞는 것은?",
+            "choices": [
+                  "Var(X)=E[X²]-E[X]²",
+                  "Var(X)=E[X]+E[X²]",
+                  "Var(X)=Cov(X,Y)",
+                  "Var(X)=P(1-Px/Py)"
+            ],
+            "answer": 0,
+            "exp": "계산형 문제에서 자주 쓰는 분산 항등식이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "공분산",
+            "q": "X와 Y가 독립이면 일반적으로 성립하는 것은?",
+            "choices": [
+                  "Cov(X,Y)=1 항상",
+                  "E[X]=E[Y] 항상",
+                  "Var(X)=Var(Y) 항상",
+                  "Cov(X,Y)=0"
+            ],
+            "answer": 3,
+            "exp": "독립이면 E[XY]=E[X]E[Y]이므로 공분산은 0이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "베이즈 정리",
+            "q": "베이즈 정리는 무엇을 갱신하는 공식인가?",
+            "choices": [
+                  "가격을 한계비용으로",
+                  "관세를 쿼터로",
+                  "사전확률을 정보 관측 후 사후확률로",
+                  "분산을 평균으로"
+            ],
+            "answer": 2,
+            "exp": "새로운 증거가 주어졌을 때 조건부확률을 갱신한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "중심극한정리",
+            "q": "중심극한정리의 핵심은?",
+            "choices": [
+                  "가설검정이 불가능하다",
+                  "표본평균의 분포가 큰 표본에서 정규분포에 가까워진다",
+                  "모든 자료가 항상 정규분포다",
+                  "표본분산이 항상 0이다"
+            ],
+            "answer": 1,
+            "exp": "많은 독립 표본의 평균은 적절한 조건에서 정규근사를 따른다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "불편성",
+            "q": "추정량의 불편성이란?",
+            "choices": [
+                  "추정량의 기댓값이 참 모수와 같다",
+                  "표본이 커질수록 계산이 쉬워진다",
+                  "분산이 항상 0이다",
+                  "귀무가설을 항상 기각한다"
+            ],
+            "answer": 0,
+            "exp": "평균적으로 참값을 맞히는 성질이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "일치성",
+            "q": "추정량의 일치성이란?",
+            "choices": [
+                  "항상 불편이라는 뜻",
+                  "분산이 정확히 1이라는 뜻",
+                  "p값이 항상 작다는 뜻",
+                  "표본이 커질수록 참 모수로 수렴한다"
+            ],
+            "answer": 3,
+            "exp": "큰 표본에서 추정오차가 사라지는 성질이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "효율성",
+            "q": "효율적인 추정량은 어떤 성질을 갖는가?",
+            "choices": [
+                  "표본크기를 줄인다",
+                  "귀무가설을 유지한다",
+                  "같은 조건의 추정량 중 분산이 작다",
+                  "항상 편의가 크다"
+            ],
+            "answer": 2,
+            "exp": "효율성은 추정량의 정밀도와 관련된다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "최대우도",
+            "q": "최대우도추정은 무엇을 최대화하는가?",
+            "choices": [
+                  "한계비용",
+                  "관측자료가 나올 가능도",
+                  "표본분산 그 자체",
+                  "정부지출"
+            ],
+            "answer": 1,
+            "exp": "주어진 모수에서 관측 표본이 나올 가능성을 가장 크게 하는 모수를 고른다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "가설검정",
+            "q": "p값의 의미로 가장 적절한 것은?",
+            "choices": [
+                  "귀무가설하에서 관측값만큼 극단적인 결과가 나올 확률",
+                  "대립가설이 참일 확률",
+                  "귀무가설이 참일 확률",
+                  "표본평균 그 자체"
+            ],
+            "answer": 0,
+            "exp": "p값은 귀무가설을 기준으로 표본증거의 극단성을 측정한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "제1종 오류",
+            "q": "제1종 오류는 무엇인가?",
+            "choices": [
+                  "거짓 귀무가설을 기각하지 않음",
+                  "표본을 크게 잡음",
+                  "분산을 계산함",
+                  "참인 귀무가설을 기각"
+            ],
+            "answer": 3,
+            "exp": "유의수준은 제1종 오류 확률을 통제한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "검정력",
+            "q": "검정력은 무엇인가?",
+            "choices": [
+                  "표본분산의 제곱",
+                  "회귀계수의 합",
+                  "거짓 귀무가설을 기각할 확률",
+                  "참 귀무가설을 기각할 확률"
+            ],
+            "answer": 2,
+            "exp": "검정력은 대립가설이 참일 때 이를 찾아내는 능력이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "OLS",
+            "q": "OLS는 무엇을 최소화하는가?",
+            "choices": [
+                  "종속변수의 최댓값",
+                  "잔차제곱합",
+                  "잔차의 단순합",
+                  "설명변수의 평균"
+            ],
+            "answer": 1,
+            "exp": "최소제곱법은 관측값과 예측값 차이의 제곱합을 최소화한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "정규방정식",
+            "q": "OLS 정규방정식이 의미하는 것은?",
+            "choices": [
+                  "X'e = 0",
+                  "P=MC",
+                  "S=I+CA 불가능",
+                  "M/P=0"
+            ],
+            "answer": 0,
+            "exp": "OLS 잔차는 포함된 설명변수와 표본상 직교한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "Gauss-Markov",
+            "q": "Gauss-Markov 정리에서 BLUE의 뜻은?",
+            "choices": [
+                  "항상 비선형 최적",
+                  "편의가 가장 큰 추정량",
+                  "검정력이 0인 추정량",
+                  "선형불편추정량 중 최소분산"
+            ],
+            "answer": 3,
+            "exp": "조건이 성립하면 OLS는 선형불편추정량 중 가장 효율적이다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "누락변수편의",
+            "q": "누락변수편의의 방향을 판단할 때 필요한 두 요소는?",
+            "choices": [
+                  "관세율과 환율만",
+                  "평균과 중앙값만",
+                  "누락변수의 종속변수 효과와 포함변수와의 상관",
+                  "표본크기와 유의수준만"
+            ],
+            "answer": 2,
+            "exp": "두 부호의 곱으로 편의 방향을 판단한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "다중공선성",
+            "q": "심한 다중공선성의 직접적 문제는?",
+            "choices": [
+                  "표본평균이 0이 된다",
+                  "계수 추정의 표준오차가 커질 수 있다",
+                  "OLS가 반드시 편의된다",
+                  "종속변수가 사라진다"
+            ],
+            "answer": 1,
+            "exp": "설명변수 간 강한 상관은 개별 계수의 정밀도를 낮춘다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "이분산",
+            "q": "이분산이 있어도 외생성이 유지되면 OLS 계수는?",
+            "choices": [
+                  "불편/일치일 수 있지만 일반 표준오차가 틀릴 수 있다",
+                  "반드시 편의된다",
+                  "항상 효율적이다",
+                  "계산이 불가능하다"
+            ],
+            "answer": 0,
+            "exp": "이분산은 주로 표준오차와 효율성 문제를 만든다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "강건표준오차",
+            "q": "White robust 표준오차는 무엇에 대응하는가?",
+            "choices": [
+                  "단위근",
+                  "비교우위",
+                  "공공재",
+                  "이분산"
+            ],
+            "answer": 3,
+            "exp": "이분산이 있을 때도 유효한 추론을 돕는다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "자기상관",
+            "q": "Newey-West 표준오차가 대응하는 문제는?",
+            "choices": [
+                  "독점과 담합",
+                  "소득효과와 대체효과",
+                  "이분산과 자기상관",
+                  "관세와 쿼터"
+            ],
+            "answer": 2,
+            "exp": "시계열 회귀에서 오차의 시간적 상관과 이분산에 강건하게 만든다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "내생성",
+            "q": "내생성이란?",
+            "choices": [
+                  "상수항이 있는 문제",
+                  "설명변수가 오차항과 상관되는 문제",
+                  "종속변수가 정규분포인 문제",
+                  "표본크기가 큰 문제"
+            ],
+            "answer": 1,
+            "exp": "내생성이 있으면 OLS의 인과적 해석이 어려워지고 불일치가 생길 수 있다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "도구변수",
+            "q": "도구변수의 두 핵심 조건은?",
+            "choices": [
+                  "관련성과 외생성",
+                  "공공성과 비배제성",
+                  "절대우위와 비교우위",
+                  "고정환율과 변동환율"
+            ],
+            "answer": 0,
+            "exp": "도구변수는 내생변수와 관련되지만 오차항과는 관련되지 않아야 한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "2SLS",
+            "q": "2SLS의 1단계에서 하는 일은?",
+            "choices": [
+                  "종속변수를 제거한다",
+                  "잔차를 무조건 0으로 둔다",
+                  "관세율을 계산한다",
+                  "내생변수를 도구변수로 설명해 예측값을 구한다"
+            ],
+            "answer": 3,
+            "exp": "1단계 예측값을 2단계 구조식에 사용한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "패널 고정효과",
+            "q": "고정효과 모형이 제거하는 것은?",
+            "choices": [
+                  "표본오차 전체",
+                  "종속변수 전체",
+                  "시간불변 미관측 개체특성",
+                  "모든 시간변화 변수"
+            ],
+            "answer": 2,
+            "exp": "개체 내 변화만 이용해 시간불변 이질성을 통제한다."
+      },
+      {
+            "unit": "경제통계+계량경제",
+            "keyword": "시계열",
+            "q": "단위근이 있는 변수의 수준회귀에서 주의할 점은?",
+            "choices": [
+                  "관세수입 발생",
+                  "가성회귀 가능성",
+                  "항상 BLUE 보장",
+                  "표본오차 0"
+            ],
+            "answer": 1,
+            "exp": "비정상 시계열끼리의 회귀는 의미 없는 높은 설명력을 보일 수 있다."
+      }
+
+      ,
+      {"unit": "미시경제", "keyword": "수요의 가격탄력성", "q": "선형 수요곡선 P = a - bQ에서 중간점의 가격탄력성은?", "choices": ["0", "∞", "1", "b/a"], "answer": 2, "exp": "선형 수요곡선의 중간점에서 |ε| = 1이다."},
+      {"unit": "미시경제", "keyword": "슬러츠키 방정식", "q": "슬러츠키 방정식에서 가격 변화의 총효과를 바르게 분해한 것은?", "choices": ["소득효과 + 대체효과", "생산효과 + 소비효과", "직접효과 + 간접효과", "단기효과 + 장기효과"], "answer": 0, "exp": "∂x/∂p = ∂h/∂p - x·(∂x/∂m): 대체효과(보상수요 변화) + 소득효과."},
+      {"unit": "미시경제", "keyword": "기펜재", "q": "기펜재(Giffen good)의 특징으로 옳은 것은?", "choices": ["가격 상승 시 수요량 감소", "가격 상승 시 수요량 증가", "항상 사치재이다", "대체효과가 소득효과보다 크다"], "answer": 1, "exp": "기펜재는 열등재 중 소득효과가 대체효과를 압도하여 수요법칙이 역전된다."},
+      {"unit": "미시경제", "keyword": "생산자잉여", "q": "완전경쟁 단기균형에서 생산자잉여와 같은 것은?", "choices": ["총수입 - 총비용", "총수입 - 가변비용", "총수입 - 고정비용", "한계수입 - 한계비용"], "answer": 1, "exp": "PS = TR - TVC = π + TFC. 고정비용은 이미 지불되었으므로 가변비용만 차감한다."},
+      {"unit": "미시경제", "keyword": "독점 러너지수", "q": "독점기업의 이윤극대화 조건 MR = MC에서 가격과 한계비용의 관계를 나타내는 러너지수는?", "choices": ["(P - MC)/P = 1/|ε|", "(P - MC)/MC = 1/|ε|", "(P + MC)/P = |ε|", "P/MC = |ε|"], "answer": 0, "exp": "러너지수 L = (P-MC)/P = 1/|ε_d|. 탄력성이 클수록 독점력이 약하다."},
+      {"unit": "미시경제", "keyword": "쿠르노 균형", "q": "비용이 0인 복점에서 수요가 P = 100 - Q일 때 쿠르노 균형 각 기업 생산량은?", "choices": ["25", "33.3", "50", "100"], "answer": 1, "exp": "쿠르노 n=2: q* = (a-c)/(3b) = 100/3 ≈ 33.3."},
+      {"unit": "미시경제", "keyword": "버트란 역설", "q": "버트란 경쟁에서 동일한 재화를 생산하는 두 기업이 가격을 동시에 설정할 때 균형은?", "choices": ["쿠르노 균형과 동일", "P = MC (경쟁시장 결과)", "P > MC (독점 결과)", "기업마다 다른 가격"], "answer": 1, "exp": "버트란 역설: 단 두 기업이어도 P = MC 경쟁균형이 달성된다."},
+      {"unit": "미시경제", "keyword": "도덕적 해이", "q": "도덕적 해이(moral hazard)를 완화하는 수단으로 가장 거리가 먼 것은?", "choices": ["성과 연동 보수", "사전 심사(screening)", "모니터링 강화", "공제(deductible) 도입"], "answer": 1, "exp": "스크리닝은 역선택(adverse selection) 대응수단이다. 도덕적 해이는 계약 후 행동 변화 문제다."},
+      {"unit": "미시경제", "keyword": "파레토 효율", "q": "파레토 효율적 배분의 정의로 옳은 것은?", "choices": ["모든 사람의 효용이 동일한 배분", "누군가의 효용을 줄이지 않고는 다른 사람의 효용을 높일 수 없는 배분", "사회 후생이 최대인 배분", "자원이 균등하게 분배된 상태"], "answer": 1, "exp": "파레토 효율: 파레토 개선이 더 이상 불가능한 상태."},
+      {"unit": "미시경제", "keyword": "코즈 정리", "q": "코즈 정리가 성립하기 위한 핵심 조건은?", "choices": ["정부가 세금을 부과해야 한다", "재산권이 명확히 설정되고 거래비용이 0이어야 한다", "외부성이 양(+)이어야 한다", "독점 시장이어야 한다"], "answer": 1, "exp": "코즈 정리: 거래비용이 없으면 재산권 귀속에 무관하게 협상으로 효율적 결과에 도달한다."},
+      {"unit": "미시경제", "keyword": "피구세", "q": "부정적 외부성이 있을 때 피구세의 크기는?", "choices": ["한계외부비용(MEC)과 동일하게 설정", "한계사적비용과 동일하게 설정", "생산량에 관계없이 일정액 부과", "수요의 탄력성에 반비례"], "answer": 0, "exp": "피구세 t* = MEC at 사회적 최적 산출량. 사회적 비용 = 사적 비용 + 외부비용을 내부화한다."},
+      {"unit": "미시경제", "keyword": "사무엘슨 조건", "q": "공공재의 사회적 최적 공급 조건(사무엘슨 조건)은?", "choices": ["각 개인의 MRS = MRT", "모든 개인 MRS의 합 = MRT", "평균 MRS = MRT", "최대 MRS = MRT"], "answer": 1, "exp": "비배제·비경합 공공재: Σ_i MRS_i = MRT (개별 한계편익의 합 = 한계비용)."},
+      {"unit": "미시경제", "keyword": "기대효용이론", "q": "위험 기피자(risk averter)의 특징으로 옳은 것은?", "choices": ["효용함수가 선형", "확실성등가 > 기대값", "확실성등가 < 기대값", "기대값 = 확실성등가"], "answer": 2, "exp": "위험기피자는 불확실한 도박의 확실성등가 < 기대값. 효용함수는 오목(concave)."},
+      {"unit": "미시경제", "keyword": "죄수의 딜레마", "q": "죄수의 딜레마에서 내쉬 균형의 특징은?", "choices": ["협력이 지배전략", "배신이 지배전략이며 균형에서 파레토 비효율 발생", "혼합전략 균형만 존재", "파레토 최적 결과가 달성"], "answer": 1, "exp": "배신이 우월전략 → (배신, 배신)이 내쉬균형이지만 (협력, 협력)보다 파레토 열등."},
+      {"unit": "미시경제", "keyword": "역선택", "q": "중고차 시장에서 역선택이 발생하는 근본 원인은?", "choices": ["가격이 너무 높아서", "판매자와 구매자 간 정보 비대칭", "정부 규제 부재", "수요가 공급을 초과"], "answer": 1, "exp": "Akerlof 레몬시장: 판매자만 품질을 알아 저품질 차만 거래되는 시장 붕괴 가능."},
+      {"unit": "거시경제+화폐금융", "keyword": "IS 곡선", "q": "IS 곡선이 우하향하는 이유는?", "choices": ["이자율 상승 시 화폐수요 감소", "이자율 상승 시 투자 감소 → 소득 감소", "이자율 상승 시 수출 증가", "이자율과 소득은 무관"], "answer": 1, "exp": "r↑ → I↓ → Y↓ (승수 효과). 따라서 r과 Y는 반비례 → IS 우하향."},
+      {"unit": "거시경제+화폐금융", "keyword": "화폐수량설", "q": "피셔의 교환방정식 MV = PY에서 V와 Y가 일정할 때 통화량 10% 증가의 결과는?", "choices": ["실질GDP 10% 증가", "물가 10% 상승", "이자율 10% 상승", "실업률 10% 하락"], "answer": 1, "exp": "V, Y 고정 → M↑ → P↑ 비례. 고전학파 화폐중립성."},
+      {"unit": "거시경제+화폐금융", "keyword": "단기 필립스 곡선", "q": "단기 필립스 곡선에서 인플레이션과 실업률의 관계는?", "choices": ["양(+)의 상관관계", "무관", "음(-)의 상관관계 (상충 관계)", "동일한 방향으로 움직임"], "answer": 2, "exp": "단기: π↑ ↔ u↓ (총수요 확장 시). 장기 필립스 곡선은 수직(자연실업률)."},
+      {"unit": "거시경제+화폐금융", "keyword": "솔로 황금률", "q": "솔로 모형의 황금률 조건은?", "choices": ["저축률 = 감가상각률", "자본의 한계생산물 = 인구증가율 + 감가상각률", "MPK = 이자율", "MPK = 0"], "answer": 1, "exp": "황금률: 1인당 소비 c = f(k)-(δ+n)k를 극대화 → f'(k*) = δ+n, 즉 MPK = δ+n."},
+      {"unit": "거시경제+화폐금융", "keyword": "리카도 대등정리", "q": "리카도 대등정리에 따르면 정부가 세금을 감면하고 국채를 발행할 때 민간소비는?", "choices": ["즉시 증가한다", "변하지 않는다", "즉시 감소한다", "장기에만 증가한다"], "answer": 1, "exp": "합리적 가계는 미래 세금 부담을 예상해 현재 세금 감면분을 저축 → 소비 불변."},
+      {"unit": "거시경제+화폐금융", "keyword": "테일러 준칙", "q": "테일러 준칙에 따르면 인플레이션이 목표보다 높을 때 중앙은행은?", "choices": ["정책금리를 인하한다", "정책금리를 인상한다", "통화량을 늘린다", "환율을 절하시킨다"], "answer": 1, "exp": "i = r* + π + α(π-π*) + β(y-y*): π > π* → i 인상. 테일러 원리: 금리 반응계수 > 1."},
+      {"unit": "거시경제+화폐금융", "keyword": "통화승수", "q": "현금보유비율(c)과 지급준비율(r)이 있을 때 통화승수는?", "choices": ["1/r", "(1+c)/(c+r)", "1/(1-r)", "c/(c+r)"], "answer": 1, "exp": "m = (1+c)/(c+r). c=0이면 m=1/r."},
+      {"unit": "거시경제+화폐금융", "keyword": "먼델-플레밍 통화정책", "q": "소규모 개방경제 변동환율제도에서 확장적 통화정책의 효과는?", "choices": ["소득 불변", "소득 증가 (통화정책 효과적)", "소득 감소", "환율 절상으로 완전 상쇄"], "answer": 1, "exp": "변동환율+자본이동 자유: 통화공급↑ → r↓ → 자본유출 → 환율절하 → NX↑ → Y↑."},
+      {"unit": "거시경제+화폐금융", "keyword": "구축효과", "q": "LM 곡선이 수직일 때 재정지출 확대의 GDP 효과는?", "choices": ["승수만큼 증가", "완전 구축 (효과 없음)", "부분적으로 증가", "감소"], "answer": 1, "exp": "LM 수직(고전학파) = 완전구축. 재정지출↑ → r↑ → 투자↓, 소득 불변."},
+      {"unit": "거시경제+화폐금융", "keyword": "오쿤의 법칙", "q": "오쿤의 법칙에 따르면 실업률이 1%p 상승할 때 GDP 갭은 대략?", "choices": ["0.5%p 감소", "1%p 감소", "2%p 감소", "변하지 않음"], "answer": 2, "exp": "오쿤 계수 ≈ -2: 실업률 1%p↑ → 실질GDP 약 2% 감소."},
+      {"unit": "거시경제+화폐금융", "keyword": "유동성 함정", "q": "유동성 함정 상황에서 통화정책의 효과는?", "choices": ["정상적으로 작동한다", "효과가 없다", "재정정책보다 강하다", "환율 경로로 작동한다"], "answer": 1, "exp": "유동성 함정: 이자율 0 근처에서 LM이 수평 → 통화공급↑해도 r 불변 → 투자·소득 불변."},
+      {"unit": "거시경제+화폐금융", "keyword": "인플레이션 조세", "q": "인플레이션 조세(inflation tax)의 납부자는?", "choices": ["부동산 보유자", "실질 화폐잔고 보유자", "주식 보유자", "외채 보유자"], "answer": 1, "exp": "인플레이션은 실질 화폐가치를 잠식 → 화폐 보유자가 세금을 내는 효과."},
+      {"unit": "거시경제+화폐금융", "keyword": "피셔 효과", "q": "기대인플레이션이 2%p 상승하면 피셔 방정식에 따라?", "choices": ["실질이자율 2%p 상승", "명목이자율 2%p 상승", "명목이자율 불변", "실질이자율 2%p 하락"], "answer": 1, "exp": "피셔 효과: 기대인플레이션↑ → 명목금리 동일 폭 상승 → 실질금리 불변."},
+      {"unit": "거시경제+화폐금융", "keyword": "자연실업률", "q": "자연실업률(NAIRU)을 구성하는 요소가 아닌 것은?", "choices": ["마찰적 실업", "구조적 실업", "경기적 실업", "탐색적 실업"], "answer": 2, "exp": "자연실업률 = 마찰적 실업 + 구조적 실업. 경기적 실업은 경기침체 시 발생하는 순환적 실업이다."},
+      {"unit": "국제경제", "keyword": "비교우위", "q": "리카도 비교우위론에 따르면 무역의 발생 근거는?", "choices": ["절대생산비 차이", "상대적 기회비용(비교생산비) 차이", "요소부존량 차이", "규모의 경제"], "answer": 1, "exp": "비교우위: 기회비용이 더 낮은 재화에 특화 → 상호 이익 교역 가능."},
+      {"unit": "국제경제", "keyword": "헥셔-올린 정리", "q": "헥셔-올린 모형에서 자본풍부국이 수출하는 재화는?", "choices": ["노동집약재", "자본집약재", "토지집약재", "기술집약재"], "answer": 1, "exp": "H-O 정리: 국가는 풍부한 생산요소를 집약적으로 사용하는 재화에 비교우위."},
+      {"unit": "국제경제", "keyword": "스톨퍼-사무엘슨 정리", "q": "자본풍부국이 무역을 개방할 때 노동자의 실질임금은?", "choices": ["상승", "하락", "불변", "단기에만 하락"], "answer": 1, "exp": "S-S 정리: 자본풍부국 개방 → 자본집약재 수출 → 노동수요 감소 → 실질임금 하락."},
+      {"unit": "국제경제", "keyword": "구매력평가(PPP)", "q": "절대적 PPP가 성립할 때 명목환율(원/달러)이 결정되는 방식은?", "choices": ["e = P*/P", "e = P/P*", "e = 이자율 차이", "e = 1 항상"], "answer": 1, "exp": "절대 PPP: e = P_국내 / P_외국. 국내물가가 높을수록 원화 절하."},
+      {"unit": "국제경제", "keyword": "마샬-러너 조건", "q": "환율 절하가 경상수지를 개선하기 위한 마샬-러너 조건은?", "choices": ["|ε_x| + |ε_m| > 1", "|ε_x| + |ε_m| < 1", "|ε_x| = |ε_m|", "|ε_x| × |ε_m| > 1"], "answer": 0, "exp": "수출탄력성과 수입탄력성의 절댓값 합 > 1일 때 환율 절하가 무역수지 개선."},
+      {"unit": "국제경제", "keyword": "J커브 효과", "q": "환율 절하 직후 경상수지가 일시적으로 악화되는 이유는?", "choices": ["수출 가격이 오르기 때문", "단기적으로 수출입 물량 조정이 느려 가격 효과만 반영", "수입이 즉각 감소하기 때문", "자본수지가 악화되기 때문"], "answer": 1, "exp": "단기: 물량 비탄력적 → 가격 상승 효과만 → 무역수지 악화. 장기: 물량 조정 → 개선."},
+      {"unit": "국제경제", "keyword": "국제수지 항등식", "q": "경상수지 + 자본·금융계정 + 오차 및 누락 = ?", "choices": ["GDP", "0", "외환보유고 변화", "무역수지"], "answer": 1, "exp": "국제수지는 복식부기 원칙에 따라 항상 0. 준비자산 변동을 포함하면 항등식."},
+      {"unit": "국제경제", "keyword": "불가능한 삼위일체", "q": "먼델의 트릴레마에서 동시에 달성 불가능한 세 가지는?", "choices": ["자유무역 + 재정정책 + 통화정책", "고정환율 + 자본이동 자유 + 독립적 통화정책", "저물가 + 완전고용 + 경상수지 흑자", "높은 성장 + 낮은 인플레이션 + 재정균형"], "answer": 1, "exp": "셋 중 두 개만 선택 가능: 고정환율+자본이동 → 통화정책 포기."},
+      {"unit": "국제경제", "keyword": "최적통화지역", "q": "먼델의 최적통화지역(OCA) 이론에서 단일통화 도입이 유리한 조건이 아닌 것은?", "choices": ["생산요소 이동성이 높다", "경제 충격이 비대칭적이다", "역내 교역비중이 높다", "재정이전 메커니즘이 존재"], "answer": 1, "exp": "비대칭 충격이 클수록 각국이 독자 통화정책 필요 → 단일통화 비용 증가."},
+      {"unit": "국제경제", "keyword": "환율 오버슈팅", "q": "Dornbusch 오버슈팅 모형에서 통화 공급 확대 직후 환율이 장기균형보다 더 크게 절하되는 이유는?", "choices": ["재화시장이 금융시장보다 빠르게 조정되기 때문", "재화시장은 느리게, 금융시장은 즉각 조정되기 때문", "중앙은행이 개입하기 때문", "PPP가 단기에도 성립하기 때문"], "answer": 1, "exp": "가격 경직성(재화시장 느림) + 금융시장 즉각 조정 → 단기 환율 과잉반응(오버슈팅)."},
+      {"unit": "국제경제", "keyword": "교역조건", "q": "교역조건(Terms of Trade)이 개선된다는 것은?", "choices": ["수입가격 상승", "수출가격/수입가격 비율 상승", "수출물량 감소", "환율 절하"], "answer": 1, "exp": "TOT = P_X / P_M. TOT 개선 → 같은 수출물량으로 더 많은 수입 가능."},
+      {"unit": "국제경제", "keyword": "국제 피셔 효과", "q": "국제 피셔 효과에 따르면 한국 금리가 미국보다 2% 높을 때 원화 환율의 변화는?", "choices": ["원화 2% 절상 예상", "원화 2% 절하 예상", "환율 불변", "환율 변동 예측 불가"], "answer": 1, "exp": "국제피셔효과: 고금리 통화는 그만큼 절하 예상 → 실질수익률 균등화."},
+      {"unit": "국제경제", "keyword": "관세와 수입할당", "q": "관세와 수입할당의 가장 중요한 차이점은?", "choices": ["관세는 수입을 완전히 금지한다", "할당은 국내가격을 낮춘다", "관세는 정부 세수를 발생시키지만 할당은 수입업자에게 할당지대 귀속", "관세는 생산자에게 불리하다"], "answer": 2, "exp": "관세 → 정부 세수. 수입할당 → 할당권 보유자에게 지대 귀속. 가격 효과는 동일 가능."},
+      {"unit": "경제통계+계량경제", "keyword": "가우스-마르코프 정리", "q": "가우스-마르코프 정리에 따르면 OLS가 BLUE인 조건으로 필요하지 않은 것은?", "choices": ["오차의 기댓값 = 0", "오차의 등분산성", "오차의 정규분포", "설명변수와 오차항의 비상관"], "answer": 2, "exp": "BLUE(Best Linear Unbiased Estimator)는 정규분포 가정 없이 성립. 정규분포는 t·F 검정에 필요."},
+      {"unit": "경제통계+계량경제", "keyword": "다중공선성", "q": "다중공선성(multicollinearity)의 증상으로 옳지 않은 것은?", "choices": ["개별 계수의 표준오차가 크다", "F검정은 유의하지만 t검정은 유의하지 않다", "OLS 추정량이 편의된다", "계수 추정치가 불안정하다"], "answer": 2, "exp": "다중공선성은 분산을 키울 뿐 불편성은 유지된다. OLS는 여전히 BLUE."},
+      {"unit": "경제통계+계량경제", "keyword": "이분산", "q": "이분산(heteroskedasticity)이 존재할 때 OLS에 대한 설명으로 옳은 것은?", "choices": ["추정량이 편의된다", "추정량은 불편이지만 효율적이지 않으며 표준오차가 잘못 계산된다", "F통계량은 여전히 유효하다", "OLS를 사용해서는 안 된다"], "answer": 1, "exp": "이분산 → OLS 불편성 유지, 비효율적 + 표준오차 오류 → t·F 검정 무효. 로버스트 표준오차 사용."},
+      {"unit": "경제통계+계량경제", "keyword": "도구변수(IV)", "q": "도구변수(Z)가 유효하기 위한 두 조건은?", "choices": ["Z와 Y가 상관, Z와 ε 무상관", "Z와 내생변수 X가 상관, Z와 오차항 ε 무상관", "Z와 X 무상관, Z와 Y 상관", "Z가 Y를 직접 결정"], "answer": 1, "exp": "①관련성(relevance): Cov(Z,X)≠0 ②외생성(exogeneity): Cov(Z,ε)=0."},
+      {"unit": "경제통계+계량경제", "keyword": "자기상관과 DW", "q": "자기상관이 있을 때 Durbin-Watson 통계량은?", "choices": ["2에 가깝다", "0에 가깝다 (양의 자기상관)", "4에 가깝다", "음수가 된다"], "answer": 1, "exp": "DW ≈ 2(1-ρ). 양의 자기상관(ρ>0) → DW < 2, 심하면 0에 근접."},
+      {"unit": "경제통계+계량경제", "keyword": "고정효과 추정", "q": "고정효과(FE) 추정에서 Within 추정량이 제거하는 것은?", "choices": ["시간 변동 오차", "시간불변 개체 고유효과(개인 고정효과)", "이분산", "자기상관"], "answer": 1, "exp": "FE: 개체 내 평균 차감(within transform) → 개체 고유 불변특성 α_i 제거."},
+      {"unit": "경제통계+계량경제", "keyword": "베이즈 정리", "q": "사전확률 P(A)=0.1, P(B|A)=0.8, P(B|Ac)=0.2 일 때 P(A|B)는?", "choices": ["0.10", "0.31", "0.80", "0.50"], "answer": 1, "exp": "P(A|B) = 0.8×0.1 / (0.8×0.1 + 0.2×0.9) = 0.08/0.26 ≈ 0.31."},
+      {"unit": "경제통계+계량경제", "keyword": "중심극한정리", "q": "중심극한정리(CLT)에 따르면 표본 평균의 분포는 표본 크기가 충분히 클 때?", "choices": ["원래 모집단과 같은 분포", "정규분포에 근사", "균등분포", "t 분포"], "answer": 1, "exp": "CLT: 모집단 분포에 무관하게 √n(X̄-μ)/σ → N(0,1)."},
+      {"unit": "경제통계+계량경제", "keyword": "1종·2종 오류", "q": "유의수준(α)을 낮추면 어떤 오류가 줄고 어떤 오류가 늘어나는가?", "choices": ["1종 오류↓, 2종 오류↑", "1종 오류↑, 2종 오류↓", "두 오류 모두 감소", "두 오류 모두 증가"], "answer": 0, "exp": "α = P(1종 오류). α↓ → 기각 어려워짐 → 귀무가설 채택 증가 → 2종 오류(β)↑."},
+      {"unit": "경제통계+계량경제", "keyword": "공적분과 ECM", "q": "두 I(1) 변수가 공적분 관계에 있을 때 적절한 분석 방법은?", "choices": ["수준변수로 OLS 추정", "1차 차분 후 VAR", "오차수정모형(ECM) 추정", "로그 변환 후 OLS"], "answer": 2, "exp": "공적분이 있으면 장기 균형 관계를 포함하는 ECM이 적절. 차분만 하면 장기 정보 손실."},
+      {"unit": "경제통계+계량경제", "keyword": "F검정", "q": "회귀분석에서 F검정의 귀무가설은?", "choices": ["모든 계수가 1이다", "모든 기울기 계수가 동시에 0이다", "오차항이 정규분포를 따른다", "상수항이 0이다"], "answer": 1, "exp": "F검정: H0: β1=β2=...=βk=0. 전체 모형의 유의성 검정."},
+      {"unit": "경제통계+계량경제", "keyword": "결정계수 R²", "q": "R²에 대한 설명으로 옳지 않은 것은?", "choices": ["0과 1 사이의 값", "설명변수를 추가하면 반드시 증가하거나 불변", "인과관계를 증명한다", "SSR/SST = 1 - SSE/SST"], "answer": 2, "exp": "R²는 적합도를 나타낼 뿐 인과관계와 무관하다."}
+];
+    const SHORT_QUESTIONS = [
+      {
+        year: "2023",
+        source: "2023 공개기출 p.1",
+        title: "부정적 외부효과와 교정정책",
+        prompt: "제품 생산에 따른 공해유발 등 부정적 외부효과가 발생하는 경우, 기업의 이윤극대화 생산량이 사회적 최적생산량보다 과다할 수 있음을 사적 한계비용과 사회적 한계비용 개념으로 설명하시오. 사회적 최적생산량을 달성하기 위한 정부 방안도 설명하시오. 필요시 그래프를 사용하시오.",
+        tags: ["미시경제", "외부효과", "피구세"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.1",
+        title: "먼델-플레밍 정책효과",
+        prompt: "소규모 개방경제, 변동환율제, 자유로운 자본이동을 가정할 때 재정정책과 통화정책 중 어떤 정책이 소득증가에 더 큰 효과를 갖는지 모형과 그래프로 설명하시오.",
+        tags: ["거시경제", "개방경제", "Mundell-Fleming"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.2",
+        title: "패널자료와 고정효과",
+        prompt: "순수 횡단면자료나 시계열자료에 비해 패널자료가 갖는 장점을 설명하시오. 패널분석의 고정효과모형을 설명하고, 합동 OLS 모형 대비 장점을 설명하시오.",
+        tags: ["계량경제", "패널", "고정효과"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.2",
+        title: "내생성과 해결방안",
+        prompt: "내생적 설명변수 문제가 발생하는 원인을 세 가지 제시하고, 이 경우 OLS 추정시 어떤 문제가 발생하는지 설명하시오. 이를 해결하기 위한 방안도 기술하시오.",
+        tags: ["계량경제", "내생성", "도구변수"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.2",
+        title: "스톨퍼-새뮤얼슨 정리",
+        prompt: "스톨퍼-새뮤얼슨 정리를 설명하고, 이 정리에 기반하여 국제무역이 소득분배에 미치는 영향을 기술하시오.",
+        tags: ["국제경제", "무역", "소득분배"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.3-4",
+        title: "물가지표와 통화정책 이슈",
+        prompt: "다음 질문에 간단히 답하시오.\n1. GDP 디플레이터의 개념과 CPI와의 차이점 두 가지\n2. 실업률과 고용률의 개념, 경제활동참가율 상승 시 실업률과 고용률 변화\n3. 평균물가안정목표제가 물가안정목표제와 구별되는 점\n4. 미국 CPI 상승률 서프라이즈 발표 때 달러가치가 상승하는 이유 세 가지\n5. 비전통적 통화정책 수단을 사용하는 이유와 대표 수단 세 가지\n6. 중앙은행 디지털화폐(CBDC) 도입 논의 배경 세 가지",
+        tags: ["거시경제", "물가", "통화정책"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.5-7",
+        title: "솔로우 성장모형과 전쟁 충격",
+        prompt: "골드·레드·블루 세 국가가 모두 솔로우 성장모형의 균제상태에 있다고 하자. 저축률과 1인당 GDP 비율 자료를 이용하여 레드국·블루국의 골드국 대비 소득 예측치와 기술수준 비율을 계산하시오. 전쟁으로 레드국은 노동, 블루국은 자본 손실이 상대적으로 큰 경우 각 경제의 상태 변화와 회복 경로를 그래프로 설명하시오. 블루국의 자본이 대부분 파괴되어 저축이 중단되는 빈곤함정 상황과 정부 대응도 설명하시오.",
+        tags: ["거시경제", "성장론", "솔로우"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.7-8",
+        title: "평균 근로시간 보상과 내쉬균형",
+        prompt: "직원 급여가 전체 평균 근로시간에 따라 결정되고 근로 비효용이 있는 기업을 고려한다. 개별 직원의 순수전략 내쉬균형 근로시간, 전직원 효용합을 극대화하는 근로시간, 두 결과가 다른 이유를 구하시오. 외부 지원 없이 사회최적 근로시간을 달성하기 위한 보상체계의 효용함수와 최적 보상 수준, 현실 도입상 어려움도 설명하시오.",
+        tags: ["미시경제", "게임이론", "외부효과"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.9-10",
+        title: "도구변수 추정량의 점근성",
+        prompt: "표본자료 (y, x, z)와 단순 선형회귀모형 y_i = beta x_i + u_i에서 beta_hat = sum z_i y_i / sum z_i x_i가 주어졌다. beta_hat의 일치성, 점근정규성 및 점근분산을 보이고, 도구변수 조건인 외생성과 관련성을 설명하시오. 주어진 표본 모멘트를 이용해 beta의 점근 신뢰구간을 구하고, 등분산 가정하에서 점근분산이 어떻게 단순화되는지 보이시오.",
+        tags: ["계량경제", "도구변수", "점근분포"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.11-13",
+        title: "항상소득가설과 소비 반응",
+        prompt: "미래를 할인하지 않고 차입제약이 없는 생애효용 극대화 문제에서 소비의 마팅게일 성질과 항상소득 소비식을 보이시오. 이론적 결과하에서 소비 자기회귀식의 문제점과 해결방안을 제시하시오. 소득이 지속적 충격과 일시적 충격으로 나뉠 때 지속적 충격이 소비에 더 크게 반영되는 이유를 설명하고, 일시적 소득충격 효과 추정이 과대추정될 수 있음을 논하시오.",
+        tags: ["거시경제", "소비이론", "항상소득가설"]
+      },
+      {
+        year: "2023",
+        source: "2023 공개기출 p.14-16",
+        title: "중앙은행 대차대조표와 CBDC",
+        prompt: "중앙은행과 예금은행 대차대조표가 주어진 경제에서 본원통화, 통화량, 통화승수, 현금보유성향, 실제지급준비율, 초과지급준비금을 계산하시오. 기준금리 인상 시 대차대조표 조정이 없을 때 문제와 공개시장운영 방안을 설명하시오. 지난해 평균 대차대조표로 중앙은행 순이익을 계산하고, CBDC가 현금과 예금을 대체할 때 공개시장운영 규모와 중앙은행 순이익 및 재정정책 여건에 미치는 영향을 계산·설명하시오.",
+        tags: ["화폐금융", "중앙은행", "CBDC"]
+      },
+      {
+        year: "2024",
+        source: "2024 공개기출 p.1-3",
+        title: "계량·지수·거시 약술",
+        prompt: "다음 질문에 간단히 답하시오.\n1. 이분산 존재 시 OLS 추정량의 특성과 이분산 탐지 검정 두 가지 이상\n2. 라스파이레스 수량지수와 파셰 수량지수, 현시선호이론을 이용한 후생 변화 평가\n3. 허구적 회귀와 단위근 검정·공적분 검정의 관련성\n4. 루카스 비판\n5. 구매력평가설과 현실에서 성립하기 어려운 이유 세 가지\n6. 긴축적 통화정책이 신용경로를 통해 실물경제에 미치는 영향\n7. 정부지출 증가가 동일 규모 정액세 감세보다 Y에 미치는 영향이 더 크게 간주되는 이유",
+        tags: ["계량경제", "거시경제", "국제경제"]
+      },
+      {
+        year: "2024",
+        source: "2024 공개기출 p.4-6",
+        title: "독점·쿠르노·스태켈버그 경쟁",
+        prompt: "두 제품을 독점 생산하는 기업이 동일 가격을 책정할 때 이윤극대화 가격과 이윤을 구하시오. 한 제품 시장에 두 기업이 진입한 뒤 역수요와 선형비용이 주어질 때 최적반응함수와 쿠르노 내쉬균형을 구하시오. 동일 수량 협약, 순차적 수량결정, n개 기업 경쟁으로 확장했을 때 산출량·가격·이윤과 경제적 함의를 비교하시오.",
+        tags: ["미시경제", "산업조직", "게임이론"]
+      },
+      {
+        year: "2024",
+        source: "2024 공개기출 p.7-8",
+        title: "흡연과 출생체중: 내생성·도구변수",
+        prompt: "임신중 흡연량이 출생 당시 몸무게에 미치는 영향을 단변수 선형회귀로 분석할 때 내생성을 우려하는 근거를 구체적 예로 설명하시오. 내생성이 존재하면 OLS가 효과를 과소추정할지 과대추정할지 논하시오. 분산·공분산 행렬에서 일치추정량 및 불편추정량을 얻기 위한 적합한 도구변수를 고르고, 내생성을 완화할 수 있는 사건의 예를 제시하시오.",
+        tags: ["계량경제", "내생성", "도구변수"]
+      },
+      {
+        year: "2024",
+        source: "2024 공개기출 p.9-11",
+        title: "관세와 오퍼곡선",
+        prompt: "두 국가의 자동차 수요·공급곡선에서 수입수요곡선과 수출공급곡선을 도출하고 자유무역 균형가격과 교역량을 구하시오. 단위당 종량관세 부과 후 균형가격과 교역량, 수입국 사회후생 변화분을 계산하고 현실 결과가 달라질 수 있는 이유를 설명하시오. 두 재화 무역의 상호수요곡선이 주어질 때 자유무역 균형과 관세 부과 후 균형, 교역조건 개선 여부를 구하시오.",
+        tags: ["국제경제", "관세", "오퍼곡선"]
+      },
+      {
+        year: "2025",
+        source: "2025 공개기출 p.1-2",
+        title: "미시·거시·금융 약술",
+        prompt: "다음 질문에 간단히 답하시오.\n1. 보상변화(CV)와 대등변화(EV)\n2. 리카도 대등정리와 현실적으로 성립하기 어려운 이유 두 가지\n3. 필립스 곡선에서 자연실업률의 정의와 계산\n4. 시계열이 추세안정적 과정 또는 차분안정적 과정이 되기 위한 계수 조건과 의미\n5. 기후변화 위험을 물리적 리스크와 이행리스크로 구분하고 실물경제 및 금융시스템에 미치는 영향",
+        tags: ["미시경제", "거시경제", "금융안정"]
+      },
+      {
+        year: "2025",
+        source: "2025 공개기출 p.3-4",
+        title: "순수교환경제와 평등·효율",
+        prompt: "두 소비자와 두 재화로 이루어진 순수교환경제에서 효용함수와 초기부존이 주어졌다. 각 소비자의 효용극대화 문제를 세우고 경쟁균형 배분과 균형가격을 구하시오. 계약곡선을 도출해 에지워스 상자에 표시하고 경제적 의미를 설명하시오. 기계적 평등 배분과, 평등한 부존 재분배 이후 효용을 낮추지 않으면서 파레토 효율성을 만족하는 배분집합을 비교·평가하시오.",
+        tags: ["미시경제", "일반균형", "후생경제학"]
+      },
+      {
+        year: "2025",
+        source: "2025 공개기출 p.5-7",
+        title: "특정요소·무역·생산가능곡선",
+        prompt: "세 생산요소 노동·토지·자본으로 x재와 y재를 생산하는 소규모 개방경제에서 생산가능곡선을 도출하고 자유무역하 생산량·소비량·효용을 무역 이전과 비교하시오. 자본 증가가 생산가능곡선, 생산량, 소비량, 무역량에 미치는 영향을 설명하고 대국인 경우 답이 어떻게 달라지는지 논하시오. y재 산업의 노동 한계생산이 특정 구간 이후 0이 되는 경우와 y재 가격 상승 시 생산량·소비량·실질임금 변화를 분석하시오.",
+        tags: ["국제경제", "특정요소모형", "무역"]
+      },
+      {
+        year: "2025",
+        source: "2025 공개기출 p.8-10",
+        title: "솔로우 모형: 저출산·정부지출·생산성 충격",
+        prompt: "독수리국 경제의 솔로우 성장모형에서 균제상태의 유효노동력당 자본량·생산량·소비량을 구하고, 소비 극대화 저축률과 동태적 효율성을 판단하시오. 저출산과 고령화로 인구증가율 및 저축률이 하락할 때 균제상태와 인당 소비·생산 변화율을 계산하시오. 균형재정 정부지출 도입 후 균제상태와 특징, 일시적 노동생산성 하락이 인당 생산량과 소비량에 미치는 영향을 그래프로 설명하시오.",
+        tags: ["거시경제", "성장론", "솔로우"]
+      },
+      {
+        year: "2025",
+        source: "2025 공개기출 p.11-14",
+        title: "화폐보유 가계와 은행의 자산가격 조건",
+        prompt: "화폐보유가 필요한 대표가계의 생애효용함수와 예산제약이 주어졌다. 예산제약을 실질변수로 표현하고, 라그랑지 승수를 사용해 소비·화폐보유·노동시간에 대한 일계조건을 도출하시오. 균제상태에서 인플레이션이 노동공급에 미치는 영향을 인플레이션 세금과 연결해 설명하시오. 은행의 예산제약식을 해석하고 기대 예금수익률 극대화 문제에서 주식·국채·예금수익률의 무차익 조건을 보이시오.",
+        tags: ["화폐금융", "거시경제", "자산가격"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "정상성과 약정상성",
+        prompt: "시계열 분석에서 정상성(stationarity)이 왜 중요한지 설명하시오. 강정상성과 약정상성의 차이를 설명하고, AR(1) 과정이 정상적이기 위한 조건을 제시하시오. 비정상 시계열을 그대로 회귀분석할 때 발생할 수 있는 문제도 함께 서술하시오.",
+        tags: ["계량경제", "시계열", "정상성"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "단위근과 ADF 검정",
+        prompt: "단위근이 있는 시계열의 특징을 설명하시오. Dickey-Fuller 검정과 ADF 검정의 귀무가설 및 대립가설을 쓰고, ADF 검정에서 차분항의 시차를 추가하는 이유를 설명하시오. 검정통계량 해석 시 일반 t분포를 그대로 쓰면 안 되는 이유도 서술하시오.",
+        tags: ["계량경제", "시계열", "ADF"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "추세안정과 차분안정",
+        prompt: "추세안정적 과정과 차분안정적 과정의 차이를 설명하시오. 각각의 경우 충격이 시계열에 미치는 효과가 일시적인지 영구적인지 비교하고, 분석 전에 어떤 변환 또는 모형설정을 고려해야 하는지 서술하시오.",
+        tags: ["계량경제", "시계열", "단위근"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "가성회귀와 공적분",
+        prompt: "가성회귀(spurious regression)가 무엇인지 설명하시오. 두 비정상 I(1) 변수를 수준으로 회귀했을 때 언제 의미 있는 장기관계로 해석할 수 있는지 공적분 개념을 이용해 설명하시오. 공적분이 있을 때 차분 VAR만 사용하는 것이 왜 정보 손실을 낳을 수 있는지도 서술하시오.",
+        tags: ["계량경제", "시계열", "공적분"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "ECM 오차수정모형",
+        prompt: "공적분 관계가 있는 두 변수에 대해 오차수정모형(ECM)을 설정하는 이유를 설명하시오. 오차수정항의 계수 부호와 크기가 갖는 경제적 의미를 서술하고, 단기 동학과 장기균형이 ECM 안에서 어떻게 함께 표현되는지 설명하시오.",
+        tags: ["계량경제", "시계열", "ECM"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "VAR과 충격반응함수",
+        prompt: "VAR 모형의 기본 아이디어를 설명하시오. VAR에서 충격반응함수(IRF)가 무엇을 보여주는지 서술하고, 축약형 VAR 잔차를 구조충격으로 해석하기 위해 식별이 필요한 이유를 설명하시오. 촐레스키 분해를 사용할 때 변수 순서가 왜 중요한지도 함께 쓰시오.",
+        tags: ["계량경제", "시계열", "VAR"]
+      },
+      {
+        year: "2025",
+        source: "시계열 약술 보강",
+        title: "자기상관 진단과 강건 표준오차",
+        prompt: "시계열 회귀에서 오차항 자기상관이 존재할 때 OLS 추정량과 표준오차, t검정에 어떤 문제가 생기는지 설명하시오. Durbin-Watson 검정과 Breusch-Godfrey 검정의 차이를 설명하고, Newey-West 표준오차가 어떤 상황에서 사용되는지도 서술하시오.",
+        tags: ["계량경제", "시계열", "자기상관"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "CIA 조건과 인플레이션 세금",
+        prompt: "현금선불제약(CIA 조건)이 화폐수요를 어떻게 설명하는지 서술하시오. CIA 모형에서 인플레이션이 가계의 소비와 노동공급 결정에 어떤 왜곡을 가져올 수 있는지 인플레이션 세금 개념과 연결하여 설명하시오.",
+        tags: ["거시경제", "화폐금융", "CIA"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "MIU 모형과 화폐수요",
+        prompt: "MIU(Money-in-the-Utility) 모형의 기본 가정을 설명하시오. 실질화폐잔고가 효용함수에 들어갈 때 최적 화폐보유 조건이 어떻게 도출되는지 직관적으로 서술하고, 명목금리 상승이 화폐수요에 미치는 영향을 설명하시오.",
+        tags: ["거시경제", "화폐금융", "MIU"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "보몰-토빈 화폐수요",
+        prompt: "보몰-토빈 모형에서 거래비용과 이자수익 포기의 상충관계를 설명하시오. 최적 현금인출액과 평균 화폐보유액이 소득, 거래비용, 명목금리에 어떻게 반응하는지 수식과 함께 서술하시오.",
+        tags: ["거시경제", "화폐금융", "화폐수요"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "ZLB와 비전통적 통화정책",
+        prompt: "명목금리의 제로하한(ZLB)이 무엇인지 설명하시오. ZLB에서 전통적 금리정책의 효과가 약해지는 이유와, 중앙은행이 사용할 수 있는 비전통적 통화정책 수단을 기대경로와 장기금리 경로를 중심으로 서술하시오.",
+        tags: ["거시경제", "통화정책", "ZLB"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "소비이론: 예비적 저축과 CCAPM",
+        prompt: "항상소득가설에서 일시소득과 영구소득 충격에 대한 소비 반응이 왜 다른지 설명하시오. 불확실성이 있을 때 예비적 저축이 발생하는 이유를 설명하고, CCAPM에서 자산수익률과 소비의 한계효용이 어떻게 연결되는지 서술하시오.",
+        tags: ["거시경제", "소비이론", "CCAPM"]
+      },
+      {
+        year: "2025",
+        source: "거시·화폐 약술 보강",
+        title: "투자이론: 사용자비용과 q이론",
+        prompt: "신고전파 투자이론에서 자본의 사용자비용이 투자에 미치는 영향을 설명하시오. q이론에서 평균 q와 한계 q의 의미를 구분하고, q가 1보다 클 때 투자가 증가하는 이유를 서술하시오.",
+        tags: ["거시경제", "투자이론", "q이론"]
+      }
+    ];
+    const ESSAY_QUESTIONS = [
+      {
+        year: "2023",
+        source: "2023 공개기출 p.17",
+        title: "글로벌 인플레이션과 중앙은행 대응",
+        prompt: "최근 글로벌 인플레이션이 약 30~40년 내 최고치로 급등하는 현상이 나타나고 있다.\n\n1. 최근 글로벌 인플레이션 급등의 주요인을 수요 및 공급 측면으로 구분하여 설명하고, 둘 중 어떤 측면의 요인이 더 큰 역할을 하고 있는지에 대한 자신의 판단과 이유를 설명하시오.\n\n2. 중앙은행의 신뢰도가 높을 때, 수요측 인플레이션과 일시적 공급측 인플레이션에 대한 일반적인 통화정책 대응 방식을 설명하시오.\n\n3. 최근 대다수 중앙은행이 큰 폭으로 빠르게 금리를 인상하는 주요 배경 및 목표, 금리 인상이 이러한 목표 달성으로 이어지는 메커니즘과 그 과정에서 감수해야 하는 비용을 설명하시오.\n\n4. 미 연준의 금리 인상이 실업률에 얼마나 큰 영향을 미칠지에 대한 논쟁과 관련하여 어떤 주장이 타당한지 판단하고 그 근거를 설명하시오.",
+        tags: ["논술", "인플레이션", "통화정책"]
+      }
+    ];
+    const WRONG_NOTE_ITEMS = [
+      {
+        year: "2026",
+        source: "[스터디문제]260509_발제_은지환 (최광철 2-38)",
+        title: "Diamond-Dybvig 유동성보험과 뱅크런",
+        prompt: "t=0,1,2의 세 기간 1재화 경제를 생각한다. 소비자는 단위구간 1에 균일분포하고, t=0에 각자 1단위 재화를 보유한다. t=1에 타입이 드러나며 타입 1은 t=1 소비를, 타입 2는 t=2 소비를 원한다. 타입 1의 비중은 λ, 타입 2의 비중은 1-λ이다. 소비자는 t=0에 I∈[0,1]을 장기투자한다. 장기투자를 t=1에 조기회수하면 LI를, t=2에 회수하면 RI를 얻는다. 나머지 1-I는 단기투자해 t=1에 1-I를 얻는다. 효용은 u(c), 사전 기대효용은 EU = λu(c_1)+(1-λ)βu(c_2)이다. λ=0.6, u(c)=5-1/sqrt(c), R=4, β=1, L=1로 둔다.\n\n가. 은행과 금융시장이 없을 때 autarky의 최적 소비수준과 사전 기대효용을 구하시오.\n나. 사회계획자가 존재할 때 사회적으로 최적인 소비수준을 구하시오.\n다. t=1에 만기 1기 무위험채권을 거래할 수 있고 가격이 p=1/R'일 때 균형소비수준을 구하고, 파레토 최적인지 설명하시오.\n라. 은행이 예금계약 (d_1,d_2)를 제공할 때 최적 계약과 사회후생을 구하시오.\n마. 은행이 존재할 때 모든 소비자가 t=1에 예금을 찾는 상황이 내쉬균형이 될 수 있음을 설명하시오.",
+        tags: ["오답노트", "거시경제", "금융경제", "Diamond-Dybvig"],
+        formulas: [
+          "u(c)=5-1/sqrt(c), u'(c)=1/(2c^{3/2})",
+          "Autarky: I*=1, c_1=1, c_2=4, EU=0.6u(1)+0.4u(4)=4.2",
+          "Planner resource: λc_1 + (1-λ)c_2/R = 1",
+          "Planner FOC: u'(c_1)=R u'(c_2)",
+          "c_2 = R^{2/3}c_1 = 4^{2/3}c_1",
+          "c_1*=1/(λ+(1-λ)R^{-1/3}) ≈ 1.174",
+          "c_2*=R^{2/3}c_1* ≈ 2.957",
+          "EU* ≈ 0.6u(1.174)+0.4u(2.957) ≈ 4.214",
+          "Financial market equilibrium: p=1/R, c_1=1, c_2=R=4",
+          "Bank contract: d_1=c_1*, d_2=c_2*"
+        ],
+        exp: "가에서는 조기회수 손실이 없고 L=1이므로 타입 1은 언제나 1을 소비한다. 타입 2 소비는 I가 클수록 커지므로 I*=1, 따라서 (c_1,c_2)=(1,4)이다. 나와 라의 핵심은 사전적으로 타입을 모르는 소비자에게 유동성보험을 제공하는 것이다. 사회계획자 또는 완전경쟁 은행은 λc_1+(1-λ)c_2/R=1 아래에서 u'(c_1)=R u'(c_2)를 만족시키는 (1.174, 2.957)을 선택해 autarky보다 높은 후생을 만든다. 다의 금융시장 균형에서는 사후 거래가 가능해도 타입별 보험계약이 없으므로 p=1/R에서 (1,4)가 되어 파레토 최적이 아니다. 마에서는 모든 사람이 조기인출한다고 믿으면 늦게 기다리는 소비자는 은행 자산이 소진되어 낮은 보수 또는 0을 받을 수 있으므로, 자신도 t=1에 인출하는 것이 최적 반응이 되어 뱅크런 균형이 성립한다."
+      }
+    ];
+    const WRITTEN_DETAILS = {
+      "부정적 외부효과와 교정정책": {
+        formulas: ["SMC = PMC + MEC", "사적 선택: PMB = PMC", "사회적 최적: PMB = SMC", "피구세 t = MEC at Q_social"],
+        exp: "핵심은 기업이 외부비용을 부담하지 않아 PMC 기준으로 과다생산한다는 점이다. 정부 방안은 피구세, 배출권거래제, 직접규제, 보조금 조정 순서로 쓰면 안정적이다."
+      },
+      "먼델-플레밍 정책효과": {
+        formulas: ["IS*: Y = C(Y-T) + I(r*) + G + NX(e)", "LM*: M/P = L(r*, Y)", "변동환율 + 완전 자본이동: r = r*"],
+        exp: "변동환율·완전 자본이동에서는 재정확대가 환율 절상과 순수출 감소로 상쇄되고, 통화확대는 환율 절하를 통해 소득을 늘린다. 결론은 통화정책이 더 효과적이라는 쪽이다."
+      },
+      "패널자료와 고정효과": {
+        formulas: ["y_it = x_it'β + α_i + u_it", "Within 변환: y_it - y_i_bar = (x_it - x_i_bar)'β + (u_it - u_i_bar)"],
+        exp: "패널자료는 개체별 이질성과 시간 변화를 동시에 이용한다. 고정효과는 시간불변 미관측 요인 α_i를 제거하므로, α_i와 설명변수가 상관될 때 합동 OLS보다 적절하다."
+      },
+      "내생성과 해결방안": {
+        formulas: ["내생성: Cov(X, u) ≠ 0", "IV 조건: Cov(Z, X) ≠ 0, Cov(Z, u) = 0"],
+        exp: "원인은 누락변수, 동시성, 측정오차를 쓰면 좋다. OLS는 편의·불일치가 생기며, 도구변수, 패널 고정효과, 자연실험, 통제변수 보강 등이 대표 대응이다."
+      },
+      "스톨퍼-새뮤얼슨 정리": {
+        formulas: ["재화가격 상승 → 그 재화에 집약적으로 쓰이는 요소의 실질보수 상승", "p_X ↑ and X is K-intensive → r/w ↑"],
+        exp: "무역으로 수출재 가격이 오르면 수출재 집약요소가 이득을 보고 다른 요소는 손해를 볼 수 있다. 그래서 무역이 총후생을 키워도 소득분배 갈등이 생긴다."
+      },
+      "물가지표와 통화정책 이슈": {
+        formulas: ["GDP deflator = nominal GDP / real GDP × 100", "실업률 = 실업자 / 경제활동인구", "고용률 = 취업자 / 생산가능인구"],
+        exp: "정의형 문제 묶음이다. 각 항목마다 ‘정의 → CPI·목표제·정책수단과의 차이 → 경제적 직관’ 순서로 짧게 쓰면 점수를 챙기기 쉽다."
+      },
+      "솔로우 성장모형과 전쟁 충격": {
+        formulas: ["y = A k^α", "균제상태: s y = (n + δ) k", "α = 1/2이면 y_i/y_g = (s_i/s_g)^{α/(1-α)} = s_i/s_g"],
+        exp: "저축률만 다르면 소득격차 예측은 저축률 비율로 나온다. 실제 격차와 맞지 않는 부분은 기술수준 차이로 해석하고, 전쟁 충격은 k=K/L 변화가 y, w, r 경로를 어떻게 움직이는지 그리면 된다."
+      },
+      "평균 근로시간 보상과 내쉬균형": {
+        formulas: ["u_i = h_bar - γ h_i^2", "h_bar = (h_1 + ... + h_I) / I", "개별 FOC: 1/I - 2γh_i = 0", "사회 FOC: 1 - 2γh_i = 0"],
+        exp: "개인은 자기 근로가 평균임금에 미치는 효과 1/I만 고려하지만, 사회계획자는 전체 평균임금 효과를 본다. 그래서 사적 근로시간이 사회최적보다 작고, 보상체계는 외부효과를 내부화해야 한다."
+      },
+      "도구변수 추정량의 점근성": {
+        formulas: ["β_hat = (Σ z_i y_i) / (Σ z_i x_i)", "y_i = β x_i + u_i", "plim β_hat = β + E[z_i u_i] / E[z_i x_i]", "√n(β_hat-β) → N(0, V)"],
+        exp: "일치성은 분자는 E[zy], 분모는 E[zx]로 수렴한다는 논리로 보이면 된다. E[zu]=0은 외생성, E[zx]≠0은 관련성이고, 점근분산은 z_i u_i의 분산을 E[zx]^2로 나눈 꼴이다."
+      },
+      "항상소득가설과 소비 반응": {
+        formulas: ["c_{t-1} = E_{t-1}[c_t]", "c_t = (1/(T-t)) Σ_{s=t}^{T-1} E_t[y_s]", "y_t = μ + y_t^P + y_t^T"],
+        exp: "차입제약이 없고 할인·이자가 단순하면 소비는 기대 생애소득의 평균으로 평탄화된다. 지속소득 충격은 미래소득 전체를 바꾸므로 일시충격보다 소비 반응이 크다."
+      },
+      "중앙은행 대차대조표와 CBDC": {
+        formulas: ["본원통화 = 현금통화 + 지급준비금", "통화승수 = 통화량 / 본원통화", "초과지급준비금 = 실제 지급준비금 - 법정 지급준비금"],
+        exp: "대차대조표 문제는 항목별 정의를 먼저 고정하면 계산이 정리된다. CBDC가 현금·예금을 대체하면 중앙은행 부채 구성과 이자비용, 공개시장운영 필요액, 정부 납입금이 함께 변한다."
+      },
+      "계량·지수·거시 약술": {
+        formulas: ["이분산: Var(u_i|X_i) not constant", "라스파이레스 수량지수: Σ p_0 q_1 / Σ p_0 q_0", "파셰 수량지수: Σ p_1 q_1 / Σ p_1 q_0"],
+        exp: "짧은 정의형 문항이므로 핵심 키워드를 빠짐없이 나열하는 것이 중요하다. 이분산은 표준오차, 지수는 기준가격 차이, 허구적 회귀는 단위근과 공적분을 연결하면 된다."
+      },
+      "독점·쿠르노·스태켈버그 경쟁": {
+        formulas: ["P = a - b(q_1 + q_2)", "π_i = (P-c)q_i", "Cournot: q_i = (a-c)/(3b)", "n개 기업: q_i = (a-c)/(b(n+1))"],
+        exp: "반응함수부터 세우면 쿠르노, 협약, 스태켈버그, n기업 결과가 한 줄로 연결된다. 기업 수가 늘수록 가격은 한계비용에 가까워지고 개별 이윤은 줄어든다."
+      },
+      "흡연과 출생체중: 내생성·도구변수": {
+        formulas: ["y_i = β x_i + u_i", "OLS 편의 방향은 Cov(x_i,u_i)의 부호가 결정", "IV: relevance + exogeneity"],
+        exp: "흡연량은 건강행태, 소득, 의료접근성 같은 누락변수와 얽힐 수 있다. 좋은 도구변수는 흡연량에는 영향을 주되 출생체중에는 흡연량 경로 외 직접효과가 없어야 한다."
+      },
+      "관세와 오퍼곡선": {
+        formulas: ["수입수요 MD(P) = D_A(P) - S_A(P)", "수출공급 XS(P) = S_B(P) - D_B(P)", "종량관세: P_importer = P_exporter + t"],
+        exp: "부분균형에서는 관세가 국내가격, 세계가격, 교역량, 정부수입, 사중손실을 어떻게 바꾸는지 계산한다. 오퍼곡선 문제는 관세 후 상대가격과 교역조건 변화가 핵심이다."
+      },
+      "미시·거시·금융 약술": {
+        formulas: ["CV: 새 가격에서 예전 효용 유지에 필요한 보상", "EV: 예전 가격에서 새 효용 변화와 동등한 금액", "π_t = π_t^e - 2(u_t - 0.04)"],
+        exp: "보상변화·대등변화는 기준 가격이 다르다는 점, 리카도 대등정리는 정부예산제약과 가계의 미래세금 인식, 자연실업률은 π_t=π_t^e가 되는 u라는 점을 잡으면 된다."
+      },
+      "순수교환경제와 평등·효율": {
+        formulas: ["소비자 최적: MRS_i = p_x / p_y", "파레토 효율: MRS_1 = MRS_2", "시장청산: x_1+x_2 = x_bar, y_1+y_2 = y_bar"],
+        exp: "경쟁균형은 예산선과 무차별곡선의 접점, 계약곡선은 두 소비자의 MRS가 같은 점들의 집합이다. 기계적 평등은 공평해 보여도 효율성을 보장하지 않는다는 비교가 포인트다."
+      },
+      "특정요소·무역·생산가능곡선": {
+        formulas: ["PPF: 가능한 (x,y) 생산조합의 경계", "자유무역 생산: MRT = p_x / p_y", "소비: MRS = p_x / p_y"],
+        exp: "소국은 세계가격을 주어진 것으로 받아 생산점과 소비점을 분리한다. 자본 증가는 자본집약재 쪽 PPF를 더 크게 밀고, 대국이면 교역조건 변화까지 고려해야 한다."
+      },
+      "솔로우 모형: 저출산·정부지출·생산성 충격": {
+        formulas: ["Y = K^α(AL)^{1-α}", "k_dot = s f(k) - (n+g+δ)k", "황금률: MPK = n+g+δ"],
+        exp: "균제상태는 투자곡선과 손익분기투자선의 교점이다. 저출산은 손익분기투자를 낮추지만 고령화로 저축률이 떨어지면 효과가 상쇄될 수 있어 그래프 비교가 중요하다."
+      },
+      "화폐보유 가계와 은행의 자산가격 조건": {
+        formulas: ["m_t = M_t / P_t", "π_t = (P_t - P_{t-1}) / P_{t-1}", "Fisher: 1+i_t = (1+π_t)(1+r_t)", "E_t[(d_{t+1}+q_{t+1})/q_t] = E_t[1+r_{t+1}]"],
+        exp: "명목 예산제약을 실질화할 때는 모든 명목변수를 P_t로 나누고 전기 화폐는 인플레이션으로 할인한다. 은행 조건은 국채, 주식, 예금의 기대수익률이 같아지는 무차익 조건이다."
+      },
+      "정상성과 약정상성": {
+        formulas: ["강정상성: (y_t,...,y_{t-k})의 결합분포가 t에 무관", "약정상성: E[y_t]=μ, Var(y_t)=γ_0, Cov(y_t,y_{t-k})=γ_k", "AR(1): y_t = ρ y_{t-1} + u_t, 정상조건 |ρ| < 1"],
+        exp: "시계열 추론은 평균·분산·공분산 구조가 안정적이라는 전제에 기대는 경우가 많다. 비정상 자료를 수준으로 회귀하면 높은 R²와 유의한 t값이 나와도 경제적 관계가 없는 가성회귀일 수 있다."
+      },
+      "단위근과 ADF 검정": {
+        formulas: ["DF: Δy_t = α + γ y_{t-1} + u_t", "ADF: Δy_t = α + βt + γ y_{t-1} + Σ δ_i Δy_{t-i} + u_t", "H0: γ = 0 단위근, H1: γ < 0 정상"],
+        exp: "ADF는 잔차 자기상관을 없애기 위해 지연 차분항을 추가한 DF 검정이다. 단위근 검정통계량은 비표준 분포를 따르므로 일반 t분포가 아니라 Dickey-Fuller 임계값을 사용한다."
+      },
+      "추세안정과 차분안정": {
+        formulas: ["추세안정: y_t = α + βt + u_t, u_t는 정상", "차분안정: Δy_t는 정상", "단위근 과정: y_t = y_{t-1} + u_t"],
+        exp: "추세안정 과정은 추세를 제거하면 정상이고 충격 효과가 사라진다. 차분안정 과정은 차분해야 정상이며 충격 효과가 수준에 영구적으로 남는다."
+      },
+      "가성회귀와 공적분": {
+        formulas: ["I(1): Δy_t는 I(0)", "공적분: y_t ~ I(1), x_t ~ I(1), y_t - βx_t ~ I(0)", "가성회귀: 비관련 I(1) 변수 수준회귀에서 높은 R²와 유의한 t값 발생 가능"],
+        exp: "비정상 변수라도 특정 선형결합이 정상이라면 장기균형 관계가 있다고 볼 수 있다. 공적분이 있으면 단순 차분만 하면 장기관계 정보를 버리므로 ECM이 자연스럽다."
+      },
+      "ECM 오차수정모형": {
+        formulas: ["장기관계: y_t - βx_t = u_t", "ECM: Δy_t = α u_{t-1} + Σ φ_i Δy_{t-i} + Σ ψ_i Δx_{t-i} + ε_t", "안정적 조정: α < 0"],
+        exp: "오차수정항은 전기의 장기균형 이탈분이다. α가 음수이면 y가 균형보다 높았을 때 다음 기간 변화율이 낮아져 균형으로 돌아가는 조정이 발생한다."
+      },
+      "VAR과 충격반응함수": {
+        formulas: ["VAR(1): y_t = A y_{t-1} + u_t", "IRF_h = ∂y_{t+h}/∂ε_t", "촐레스키 식별: u_t = P ε_t, Var(ε_t)=I"],
+        exp: "VAR은 변수들을 모두 내생변수처럼 두고 각 변수의 과거값으로 현재를 설명한다. 축약형 잔차는 서로 상관되어 있으므로 구조충격으로 해석하려면 추가 식별가정이 필요하며, 촐레스키는 변수 순서에 민감하다."
+      },
+      "자기상관 진단과 강건 표준오차": {
+        formulas: ["DW ≈ 2(1-ρ_hat)", "BG 보조회귀: e_t on X_t, e_{t-1},...,e_{t-p}", "Newey-West: 이분산 + 자기상관 강건 표준오차"],
+        exp: "외생성이 유지되면 OLS 계수 자체는 일치할 수 있지만 일반 표준오차가 틀려 검정이 왜곡된다. DW는 주로 1차 자기상관 진단, BG는 고차 자기상관과 지연종속변수가 있는 모형에도 더 유연하다."
+      },
+      "CIA 조건과 인플레이션 세금": {
+        formulas: ["CIA: P_t c_t ≤ M_{t-1}+T_t", "실질형: c_t ≤ m_{t-1}/(1+π_t)+τ_t", "인플레이션 세금: π_t · (M_{t-1}/P_t)"],
+        exp: "CIA는 화폐가 거래를 위해 사전에 필요하다는 제약이다. 인플레이션은 전기 화폐의 실질가치를 낮추므로 화폐보유자에게 세금처럼 작용하고, 소비와 노동공급의 한계조건을 왜곡한다."
+      },
+      "MIU 모형과 화폐수요": {
+        formulas: ["U = U(c_t, m_t)", "m_t = M_t/P_t", "FOC 직관: MU_m/MU_c = 화폐보유의 기회비용 ≈ i/(1+i)"],
+        exp: "MIU는 화폐의 유동성 서비스를 효용으로 직접 표현한다. 명목금리가 높아지면 채권 대신 화폐를 보유하는 기회비용이 커져 최적 실질화폐잔고가 줄어든다."
+      },
+      "보몰-토빈 화폐수요": {
+        formulas: ["TC = bY/C + iC/2", "C* = sqrt(2bY/i)", "M^d = C*/2 = sqrt(bY/(2i))"],
+        exp: "현금을 자주 인출하면 거래비용이 커지고, 적게 인출하면 평균 현금보유가 늘어 이자를 포기한다. 최적 화폐수요는 소득과 거래비용에는 증가하고 명목금리에는 감소한다."
+      },
+      "ZLB와 비전통적 통화정책": {
+        formulas: ["ZLB: i_t ≥ 0 근처의 하한", "실질금리: r_t ≈ i_t - E_tπ_{t+1}", "ZLB에서 E_tπ_{t+1} 상승 → r_t 하락"],
+        exp: "ZLB에서는 단기 명목금리를 더 내리기 어렵기 때문에 기대인플레이션, 장기금리, 위험프리미엄 경로가 중요해진다. 포워드가이던스와 양적완화는 이런 경로를 겨냥한다."
+      },
+      "소비이론: 예비적 저축과 CCAPM": {
+        formulas: ["Euler: u'(c_t)=β(1+r)E_t[u'(c_{t+1})]", "Precautionary saving: income risk ↑ → saving ↑ if u'''(c)>0", "CCAPM: 1=E_t[M_{t+1}R_{t+1}], M_{t+1}=βu'(c_{t+1})/u'(c_t)"],
+        exp: "영구소득 충격은 생애자원을 크게 바꾸므로 소비 반응이 크고, 일시충격은 평탄화된다. CCAPM에서는 소비가 나쁜 상태에서 수익률이 낮은 자산일수록 보험기능이 약해 더 높은 프리미엄을 요구한다."
+      },
+      "투자이론: 사용자비용과 q이론": {
+        formulas: ["사용자비용: uc ≈ (r+δ-π_K^e)P_K", "투자 증가 조건: MPK > uc", "q = 기업가치 / 자본대체비용", "한계 q > 1 → 투자 증가"],
+        exp: "이자율이나 감가상각 상승은 사용자비용을 높여 투자를 줄인다. q가 1보다 크다는 것은 설치된 자본의 가치가 새 자본 구입비용보다 크다는 뜻이라 투자가 유리해진다."
+      },
+      "글로벌 인플레이션과 중앙은행 대응": {
+        formulas: ["실질금리: r ≈ i - π^e", "수요 인플레이션: AD 확대 → y gap > 0 → π 상승", "공급 인플레이션: AS 좌측 이동 → π 상승, y 하락"],
+        exp: "좋은 답안은 원인 진단, 기대인플레이션 관리, 금리 인상 전달경로, 성장·고용 비용을 균형 있게 다룬다. 공급충격에는 신뢰도와 기대 고착 여부에 따라 대응 강도가 달라진다는 점을 넣으면 탄탄하다."
+      }
+    };
+    [...SHORT_QUESTIONS, ...ESSAY_QUESTIONS].forEach(item => Object.assign(item, WRITTEN_DETAILS[item.title] || {}));
+    const ADVANCED_UNIT_MAP = {
+      "미시경제 심화": "미시경제",
+      "거시경제 심화": "거시경제+화폐금융",
+      "국제경제 심화": "국제경제",
+      "계량경제 심화": "경제통계+계량경제"
+    };
+    const CONCEPT_DATA = DATA.reduce((merged, unit) => {
+      const unitName = ADVANCED_UNIT_MAP[unit.unit] || unit.unit;
+      const existing = merged.find(group => group.unit === unitName);
+      if (existing) existing.items.push(...unit.items);
+      else merged.push({ unit: unitName, items: [...unit.items] });
+      return merged;
+    }, []);
+    const UNITS = ["전체", ...CONCEPT_DATA.map(unit => unit.unit)];
+    const yearsFor = list => ["전체", ...Array.from(new Set(list.map(item => item.year)))];
+    let screen = "concept";
+    let selected = "전체";
+    let allOpen = false;
+    const results = JSON.parse(localStorage.getItem("bokQuizResults") || "{}");
+    const $ = id => document.getElementById(id);
+
+    function saveQuiz() { localStorage.setItem("bokQuizResults", JSON.stringify(results)); }
+    function textFor(item) { return [item.keyword, item.hint, ...item.core, ...item.memorize, ...item.exam].join(" "); }
+    function esc(text) { return String(text).replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch])); }
+    function highlight(text, q) {
+      const safe = esc(text);
+      if (!q) return safe;
+      const needle = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return safe.replace(new RegExp(needle, "gi"), match => `<mark>${match}</mark>`);
+    }
+    function isFormulaLine(text) {
+      return /[=Σ∑βκλρσπθωαΔχ²≤≥]|\b(FOC|MRS|MRT|MR|MC|UIP|PPP|NKPC|VAR|ADF|ECM|DW|LM|LR|Wald|TVC|IRF|Cov|Var|E\[|max|min)\b|_[a-zA-Z0-9{]/.test(text);
+    }
+    function renderFormulaText(text) {
+      let raw = esc(text)
+        .replaceAll("Σ", "∑")
+        .replaceAll("²", "^2")
+        .replaceAll("β", "β")
+        .replaceAll("π", "π")
+        .replaceAll("κ", "κ")
+        .replaceAll("λ", "λ")
+        .replaceAll("ρ", "ρ")
+        .replaceAll("σ", "σ")
+        .replaceAll("ω", "ω")
+        .replaceAll("α", "α")
+        .replaceAll("θ", "θ")
+        .replaceAll("Δ", "Δ");
+      raw = raw.replace(/\^\{([^}]+)\}/g, "<sup>$1</sup>");
+      raw = raw.replace(/_\{([^}]+)\}/g, "<sub>$1</sub>");
+      raw = raw.replace(/\^([A-Za-z0-9+\-]+)/g, "<sup>$1</sup>");
+      raw = raw.replace(/_([A-Za-z0-9]+)/g, "<sub>$1</sub>");
+      return raw;
+    }
+    function renderConceptItem(text, q) {
+      if (!isFormulaLine(text)) return `<li>${highlight(text, q)}</li>`;
+      const parts = String(text).split(":");
+      const hasPrefix = parts.length > 1 && parts[0].length <= 18;
+      const prefix = hasPrefix ? `<span class="prefix">${esc(parts.shift())}:</span>` : "";
+      const body = hasPrefix ? parts.join(":").trim() : text;
+      return `<li class="formula-item"><span class="formula">${prefix}<span class="math">${renderFormulaText(body)}</span></span></li>`;
+    }
+    function currentTabs() {
+      if (screen === "short") return yearsFor(SHORT_QUESTIONS);
+      if (screen === "essay") return yearsFor(ESSAY_QUESTIONS);
+      if (screen === "note") return yearsFor(WRONG_NOTE_ITEMS);
+      return UNITS;
+    }
+    function renderTabs() {
+      const list = currentTabs();
+      if (!list.includes(selected)) selected = "전체";
+      tabs.innerHTML = list.map(unit => `<button class="${unit === selected ? "active" : ""}" data-unit="${esc(unit)}">${esc(unit)}</button>`).join("");
+      tabs.querySelectorAll("button").forEach(btn => btn.onclick = () => { selected = btn.dataset.unit; allOpen = false; render(); window.scrollTo({top:0, behavior:"smooth"}); });
+    }
+    function renderStats(a, la, b, lb, c, lc) {
+      statA.textContent = a; labelA.textContent = la;
+      statB.textContent = b; labelB.textContent = lb;
+      statC.textContent = c; labelC.textContent = lc;
+    }
+    function renderConcepts() {
+      const q = search.value.trim().toLowerCase();
+      const units = CONCEPT_DATA.filter(unit => selected === "전체" || selected === unit.unit).map(unit => ({
+        ...unit,
+        items: unit.items.filter(item => !q || textFor(item).toLowerCase().includes(q))
+      })).filter(unit => unit.items.length);
+      const totalKeywords = CONCEPT_DATA.reduce((sum, unit) => sum + unit.items.length, 0);
+      const visible = units.reduce((sum, unit) => sum + unit.items.length, 0);
+      renderStats(CONCEPT_DATA.length, "단원", totalKeywords, "키워드", visible, "표시중");
+      empty.style.display = visible ? "none" : "block";
+      conceptView.innerHTML = units.map(unit => `
+        <section class="unit">
+          <div class="unit-title"><h2>${esc(unit.unit)}</h2><small>${unit.items.length}개 키워드</small></div>
+          <div class="keyword-grid">
+            ${unit.items.map(item => `
+              <details class="card" ${allOpen || q ? "open" : ""}>
+                <summary>
+                  <div class="keyword-head"><h3>${highlight(item.keyword, q)}</h3><span class="tag">열기</span></div>
+                  <div class="hint">${highlight(item.hint, q)}</div>
+                </summary>
+                <div class="body">
+                  <div class="block"><span class="label">핵심개념</span><ul>${item.core.map(x => renderConceptItem(x, q)).join("")}</ul></div>
+                  <div class="block"><span class="label warm">암기포인트</span><ul>${item.memorize.map(x => renderConceptItem(x, q)).join("")}</ul></div>
+                  <div class="block"><span class="label blue">출제포인트</span><ul>${item.exam.map(x => renderConceptItem(x, q)).join("")}</ul></div>
+                </div>
+              </details>`).join("")}
+          </div>
+        </section>`).join("");
+      openAll.textContent = allOpen ? "전체닫기" : "전체열기";
+    }
+    function filteredQuestions() {
+      return QUESTIONS.filter(item => {
+        const byUnit = selected === "전체" || item.unit === selected;
+        const r = results[item.q];
+        const mode = quizFilter.value;
+        const byMode = mode === "all" || (mode === "wrong" && r && !r.correct) || (mode === "unanswered" && !r);
+        return byUnit && byMode;
+      });
+    }
+    function renderQuiz() {
+      const list = filteredQuestions();
+      const scoped = QUESTIONS.filter(q => selected === "전체" || q.unit === selected);
+      const solved = scoped.filter(q => results[q.q]).length;
+      const correct = scoped.filter(q => results[q.q]?.correct).length;
+      renderStats(scoped.length, "문항", solved, "풀이", solved ? Math.round(correct / solved * 100) + "%" : "0%", "정답률");
+      empty.style.display = list.length ? "none" : "block";
+      quizView.innerHTML = list.map((item, idx) => {
+        const r = results[item.q];
+        return `<article class="question" data-q="${esc(item.q)}">
+          <div class="qhead"><span class="badge">${esc(item.unit)} · ${esc(item.keyword)}</span><h2>${idx + 1}. ${esc(item.q)}</h2></div>
+          <div class="choices">
+            ${item.choices.map((choice, i) => {
+              const picked = r?.picked === i;
+              const cls = r ? (i === item.answer ? "correct" : picked ? "wrong" : "") : picked ? "selected" : "";
+              return `<button class="choice ${cls}" data-choice="${i}">${esc(choice)}</button>`;
+            }).join("")}
+          </div>
+          <div class="actions"><button class="primary reveal">정답/해설</button></div>
+          <div class="answer ${r ? "show" : ""}"><strong>정답 ${item.answer + 1}번.</strong> ${esc(item.exp)}</div>
+        </article>`;
+      }).join("");
+      quizView.querySelectorAll(".choice").forEach(btn => btn.onclick = () => {
+        const article = btn.closest(".question");
+        const item = QUESTIONS.find(q => q.q === article.dataset.q);
+        const picked = Number(btn.dataset.choice);
+        results[item.q] = { picked, correct: picked === item.answer };
+        saveQuiz();
+        render();
+      });
+      quizView.querySelectorAll(".reveal").forEach(btn => btn.onclick = () => btn.closest(".question").querySelector(".answer").classList.toggle("show"));
+    }
+    function writtenText(item) { return [item.year, item.source, item.title, item.prompt, item.exp || "", ...(item.formulas || []), ...item.tags].join(" "); }
+    function renderWrittenFormula(text) {
+      return `<span class="formula"><span class="math">${renderFormulaText(text)}</span></span>`;
+    }
+    function renderWritten(list, view, typeName) {
+      const q = search.value.trim().toLowerCase();
+      const filtered = list.filter(item => {
+        const byYear = selected === "전체" || item.year === selected;
+        const bySearch = !q || writtenText(item).toLowerCase().includes(q);
+        return byYear && bySearch;
+      });
+      renderStats(yearsFor(list).length - 1, "연도", list.length, "문항", filtered.length, "표시중");
+      empty.style.display = filtered.length ? "none" : "block";
+      view.innerHTML = filtered.map((item, idx) => `
+        <details class="card" ${allOpen || q ? "open" : ""}>
+          <summary>
+            <div class="keyword-head"><h3>${idx + 1}. ${highlight(item.title, q)}</h3><span class="tag">${esc(item.year)}</span></div>
+            <div class="hint">${esc(typeName)} · ${esc(item.source)} · ${item.tags.map(tag => esc(tag)).join(", ")}</div>
+          </summary>
+          <div class="prompt">${highlight(item.prompt, q)}</div>
+          <div class="written-extra">
+            ${item.formulas?.length ? `<div class="block"><span class="label">수식 메모</span>${item.formulas.map(renderWrittenFormula).join("")}</div>` : ""}
+            ${item.exp ? `<div class="block"><span class="label blue">간단 해설</span><div class="explain">${highlight(item.exp, q)}</div></div>` : ""}
+          </div>
+        </details>`).join("");
+      openAll.textContent = allOpen ? "전체닫기" : "전체열기";
+    }
+    function render() {
+      renderTabs();
+      conceptMode.classList.toggle("active", screen === "concept");
+      quizMode.classList.toggle("active", screen === "quiz");
+      shortMode.classList.toggle("active", screen === "short");
+      essayMode.classList.toggle("active", screen === "essay");
+      noteMode.classList.toggle("active", screen === "note");
+      conceptBar.style.display = screen === "quiz" ? "none" : "grid";
+      quizBar.style.display = screen === "quiz" ? "grid" : "none";
+      conceptView.style.display = screen === "concept" ? "" : "none";
+      quizView.style.display = screen === "quiz" ? "" : "none";
+      shortView.style.display = screen === "short" ? "" : "none";
+      essayView.style.display = screen === "essay" ? "" : "none";
+      noteView.style.display = screen === "note" ? "" : "none";
+      if (screen === "concept") renderConcepts();
+      if (screen === "quiz") renderQuiz();
+      if (screen === "short") renderWritten(SHORT_QUESTIONS, shortView, "약술형");
+      if (screen === "essay") renderWritten(ESSAY_QUESTIONS, essayView, "논술");
+      if (screen === "note") renderWritten(WRONG_NOTE_ITEMS, noteView, "오답 노트");
+    }
+    conceptMode.onclick = () => { screen = "concept"; selected = "전체"; render(); };
+    quizMode.onclick = () => { screen = "quiz"; selected = "전체"; render(); };
+    shortMode.onclick = () => { screen = "short"; selected = "전체"; render(); };
+    essayMode.onclick = () => { screen = "essay"; selected = "전체"; render(); };
+    noteMode.onclick = () => { screen = "note"; selected = "전체"; render(); };
+    search.oninput = render;
+    openAll.onclick = () => { allOpen = !allOpen; render(); };
+    quizFilter.onchange = render;
+    resetQuiz.onclick = () => { Object.keys(results).forEach(key => delete results[key]); saveQuiz(); render(); };
+    topBtn.onclick = () => window.scrollTo({top:0, behavior:"smooth"});
+    if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+    render();
+  </script>
+</body>
+</html>
