@@ -3283,7 +3283,9 @@
     quizFilter.onchange = render;
     resetQuiz.onclick = () => { Object.keys(results).forEach(key => delete results[key]); saveQuiz(); render(); };
     topBtn.onclick = () => window.scrollTo({top:0, behavior:"smooth"});
-    if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+    if ("serviceWorker" in navigator) window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => reg.update()).catch(() => {});
+    });
     render();
   </script>
 </body>
