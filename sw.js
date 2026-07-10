@@ -1,4 +1,4 @@
-const CACHE_NAME = "bok-concepts-v20";
+const CACHE_NAME = "bok-concepts-v21";
 const ASSETS = [
   "./",
   "./index.html",
